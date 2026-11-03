@@ -1,0 +1,46 @@
+
+paths:
+  train: Project_data/train.csv
+  test: Project_data/test.csv
+  customers: Project_data/clientes.csv
+  processed: data/processed/
+  models: models/
+
+columns:
+  customer_id: customer_id
+  classification_target: repeat_purchase_90d
+  regression_target: spend_next_90d
+
+validation:
+  strategy: expanding_window
+  target_horizon_days: 90
+  cv_years: [2020, 2021, 2022, 2023]
+  holdout_year: 2024
+
+random_state: 42
+
+preprocessing:
+  drop_rows_without_purchase_date: true
+
+  historical_gaps:
+    insufficient_history_value: 0
+    add_missing_indicator: true
+    unexpected_missing_strategy: median
+
+    std_gap:
+      minimum_prior_purchases: 3
+      insufficient_history_value: 0
+
+  historical_purchase_values:
+    mean:
+      minimum_prior_purchases: 1
+      insufficient_history_value: 0
+      unexpected_missing_strategy: formula
+      correct_inconsistent_values: false
+      consistency_tolerance: 0.01
+      add_missing_indicator: true
+      add_correction_indicator: true
+
+    std:
+      minimum_prior_purchases: 2
+      insufficient_history_value: 0
