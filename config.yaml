@@ -5,6 +5,7 @@ paths:
   customers: Project_data/clientes.csv
   processed: data/processed/
   models: models/
+  results: results/
 
 columns:
   customer_id: customer_id
@@ -21,6 +22,20 @@ random_state: 42
 
 preprocessing:
   drop_rows_without_purchase_date: true
+
+  feature_selection:
+    drop_columns:
+      - ID
+      - customer_id
+      - random_noise
+
+  date_features:
+    source_column: purchase_date
+    extract:
+      - year
+      - month
+      - day_of_week
+    drop_original_from_model: true
 
   historical_gaps:
     insufficient_history_value: 0
@@ -44,3 +59,73 @@ preprocessing:
     std:
       minimum_prior_purchases: 2
       insufficient_history_value: 0
+
+    min_max:
+      minimum_prior_purchases: 1
+      insufficient_history_value: 0
+
+    max_consistency:
+      check_against_total_spend: true
+      inconsistent_strategy: median
+      add_correction_indicator: true
+
+  recency:
+    insufficient_history_value: 0
+    recover_from_previous_date: true
+    fallback_strategy: median
+    add_missing_indicator: true
+    add_recovery_indicator: true
+
+  spend_365d:
+    zero_when_no_purchases: true
+    unexpected_missing_strategy: median
+    add_missing_indicator: true
+    sentinel_value: 1000000000
+    sentinel_strategy: treat_as_missing
+    negative_values_strategy: treat_as_missing
+    add_correction_indicator: true
+
+  categorical_missing:
+    fallback_value: Unknown
+    add_missing_indicator: true
+
+    recover_from_customer_history:
+      - payment_type
+      - warehouse
+      - salesperson
+
+    keep_unknown:
+      - transport_method
+
+  encoding:
+    strategy: one_hot
+    drop_first: false
+    handle_unknown: ignore
+
+    categorical_columns:
+      - payment_type
+      - warehouse
+      - salesperson
+      - commercial_zone
+      - document_series
+      - purchase_month
+      - purchase_day_of_week
+
+    rare_categories:
+      enabled: true
+      columns:
+        - transport_method
+      min_frequency: 20
+      handle_unknown: infrequent_if_exist
+
+  scaling:
+    enabled: true
+    candidates:
+      - standard
+      - robust
+      - passthrough
+    default: robust
+    apply_to: numeric_features
+    fit_on: train_fold_only
+  customer_metadata:
+    enabled: false
