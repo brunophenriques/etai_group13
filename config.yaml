@@ -42,6 +42,9 @@ preprocessing:
     add_missing_indicator: true
     unexpected_missing_strategy: median
 
+    mean_gap:
+      minimum_prior_purchases: 2
+
     std_gap:
       minimum_prior_purchases: 3
       insufficient_history_value: 0
@@ -127,5 +130,6 @@ preprocessing:
     default: robust
     apply_to: numeric_features
     fit_on: train_fold_only
+
   customer_metadata:
     enabled: false
