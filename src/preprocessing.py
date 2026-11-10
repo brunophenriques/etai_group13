@@ -223,3 +223,237 @@ def recover_historical_mean(
     )
 
     return data
+
+
+
+def recover_recency(
+    df: pd.DataFrame,
+    history: pd.DataFrame,
+    config: dict
+) -> pd.DataFrame:
+    """
+    Recover missing recency using strictly earlier purchases.
+
+    history must contain only transactions available
+    at prediction time.
+    """
+    data = df.copy()
+
+    settings = config["preprocessing"]["recency"]
+
+    if not settings["recover_from_previous_date"]:
+        return data
+
+    date_col = config["preprocessing"][
+        "date_features"
+    ]["source_column"]
+
+    customer_col = config["columns"]["customer_id"]
+
+    data[date_col] = pd.to_datetime(data[date_col])
+
+    past = history[[customer_col, date_col]].copy()
+    past[date_col] = pd.to_datetime(past[date_col])
+
+    past = past.dropna(subset=[date_col])
+    past = past.rename(
+        columns={date_col: "historical_purchase_date"}
+    )
+
+    left = data.assign(_row_order=range(len(data)))
+    left = left.sort_values(date_col)
+
+    right = past.sort_values("historical_purchase_date")
+
+    merged = pd.merge_asof(
+        left,
+        right,
+        left_on=date_col,
+        right_on="historical_purchase_date",
+        by=customer_col,
+        direction="backward",
+        allow_exact_matches=False,
+    )
+
+    missing = merged["days_since_previous_purchase"].isna()
+
+    recoverable = (
+        missing
+        & (merged["prior_purchase_count"] >= 1)
+        & merged["historical_purchase_date"].notna()
+    )
+
+    merged["recency_was_recovered"] = recoverable.astype(int)
+
+    merged.loc[recoverable, "days_since_previous_purchase"] = (
+        merged.loc[recoverable, date_col]
+        - merged.loc[recoverable, "historical_purchase_date"]
+    ).dt.days.to_numpy()
+
+    merged = (
+        merged.sort_values("_row_order")
+        .drop(columns=["_row_order", "historical_purchase_date"])
+    )
+
+    merged.index = data.index
+
+    return merged
+
+from sklearn.impute import SimpleImputer
+
+
+def fit_recency_imputer(train_df: pd.DataFrame):
+    """Fit a recency imputer using training rows only."""
+    imputer = SimpleImputer(strategy="median")
+
+    imputer.fit(
+        train_df[["days_since_previous_purchase"]]
+    )
+
+    return imputer
+
+
+def apply_recency_imputer(
+    df: pd.DataFrame,
+    imputer
+) -> pd.DataFrame:
+    """Apply an already fitted imputer without refitting."""
+    data = df.copy()
+
+    data["days_since_previous_purchase"] = (
+        imputer.transform(
+            data[["days_since_previous_purchase"]]
+        ).ravel()
+    )
+
+    return data
+
+
+def fit_numeric_imputers(
+    train_df: pd.DataFrame,
+    columns: list[str],
+) -> dict:
+    """
+    Fit one median imputer per column.
+
+    IMPORTANT: train_df must contain only
+    the training rows of the current fold.
+    """
+    imputers = {}
+
+    for col in columns:
+        if train_df[col].notna().sum() == 0:
+            raise ValueError(
+                f"Cannot fit imputer: {col} is entirely missing."
+            )
+
+        imputer = SimpleImputer(strategy="median")
+        imputer.fit(train_df[[col]])
+
+        imputers[col] = imputer
+
+    return imputers
+
+
+def apply_numeric_imputers(
+    df: pd.DataFrame,
+    imputers: dict,
+) -> pd.DataFrame:
+    """
+    Apply previously fitted imputers.
+
+    Never calls fit() on validation or test data.
+    """
+    data = df.copy()
+
+    for col, imputer in imputers.items():
+        data[col] = imputer.transform(
+            data[[col]]
+        ).ravel()
+
+    return data
+
+
+
+def clean_spend_365d(
+    df: pd.DataFrame,
+    config: dict,
+) -> pd.DataFrame:
+    """
+    Convert configured suspicious spend_365d values to NaN.
+
+    Does not fit an imputer or change valid values.
+    """
+    data = df.copy()
+    settings = config["preprocessing"]["spend_365d"]
+
+    column = "spend_365d"
+
+    sentinel_mask = pd.Series(False, index=data.index)
+    negative_mask = pd.Series(False, index=data.index)
+
+    if settings["sentinel_strategy"] == "treat_as_missing":
+        sentinel_mask = (
+            data[column] == settings["sentinel_value"]
+        )
+
+    if settings["negative_values_strategy"] == "treat_as_missing":
+        negative_mask = data[column] < 0
+
+    correction_mask = sentinel_mask | negative_mask
+
+    data["spend_365d_was_corrected"] = (
+        correction_mask.astype(int)
+    )
+
+    data.loc[correction_mask, column] = float("nan")
+
+    return data
+
+
+
+def clean_prior_max_purchase_value(
+    df: pd.DataFrame,
+    config: dict,
+) -> pd.DataFrame:
+    """
+    Flag historical maximum purchase values that exceed
+    the historical total spend.
+
+    Assumes historical purchases are nonnegative and
+    both columns use the same monetary definition.
+
+    Does not fit an imputer.
+    """
+    data = df.copy()
+
+    settings = config["preprocessing"][
+        "historical_purchase_values"
+    ]["max_consistency"]
+
+    column = "prior_max_purchase_value"
+
+    correction_mask = pd.Series(
+        False, index=data.index
+    )
+
+    if settings["check_against_total_spend"]:
+        correction_mask = (
+            (data["prior_purchase_count"] >= 1)
+            & data[column].notna()
+            & data["prior_total_spend"].notna()
+            & (data["prior_total_spend"] >= 0)
+            & (
+                data[column]
+                > data["prior_total_spend"] + 0.01
+            )
+        )
+
+    if settings["add_correction_indicator"]:
+        data["prior_max_purchase_value_was_corrected"] = (
+            correction_mask.astype(int)
+        )
+
+    data.loc[correction_mask, column] = float("nan")
+
+    return data
