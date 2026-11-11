@@ -88,6 +88,15 @@ preprocessing:
     negative_values_strategy: treat_as_missing
     add_correction_indicator: true
 
+  numeric_imputation:
+    strategy: median
+    columns:
+      - prior_mean_gap_days
+      - days_since_previous_purchase
+      - spend_365d
+      - prior_max_purchase_value
+    fit_on: train_fold_only
+
   categorical_missing:
     fallback_value: Unknown
     add_missing_indicator: true

@@ -457,3 +457,89 @@ def clean_prior_max_purchase_value(
     data.loc[correction_mask, column] = float("nan")
 
     return data
+
+
+
+def recover_categorical_missing(
+    df: pd.DataFrame,
+    history: pd.DataFrame,
+    config: dict,
+) -> pd.DataFrame:
+    """Recover missing categories from earlier customer records."""
+    data = df.copy()
+
+    settings = config["preprocessing"]["categorical_missing"]
+    fallback = settings["fallback_value"]
+
+    customer_col = config["columns"]["customer_id"]
+    date_col = config["preprocessing"]["date_features"]["source_column"]
+
+    recover_columns = settings["recover_from_customer_history"]
+    unknown_columns = settings["keep_unknown"]
+
+    for col in recover_columns + unknown_columns:
+        missing = data[col].isna()
+
+        if settings["add_missing_indicator"]:
+            data[f"{col}_was_missing"] = missing.astype(int)
+
+        if col in recover_columns:
+            data[f"{col}_was_recovered"] = 0
+
+            # Only search historical records with known values
+            reference = history.loc[
+                history[col].notna(),
+                [customer_col, date_col, col],
+            ].copy()
+
+            reference[date_col] = pd.to_datetime(
+                reference[date_col]
+            )
+            reference = reference.dropna(
+                subset=[customer_col, date_col]
+            )
+
+            candidates = data.loc[
+                missing & data[customer_col].notna(),
+                [customer_col, date_col],
+            ].copy()
+
+            candidates[date_col] = pd.to_datetime(
+                candidates[date_col]
+            )
+            candidates = candidates.dropna(subset=[date_col])
+
+            if not reference.empty and not candidates.empty:
+                candidates["_original_index"] = candidates.index
+
+                candidates = candidates.sort_values(date_col)
+                reference = reference.sort_values(date_col)
+
+                matched = pd.merge_asof(
+                    candidates,
+                    reference.rename(columns={
+                        col: "_historical_value"
+                    }),
+                    on=date_col,
+                    by=customer_col,
+                    direction="backward",
+                    allow_exact_matches=False,
+                )
+
+                recovered = matched["_historical_value"].notna()
+
+                recovered_rows = matched.loc[recovered]
+
+                data.loc[
+                    recovered_rows["_original_index"],
+                    col,
+                ] = recovered_rows["_historical_value"].to_numpy()
+
+                data.loc[
+                    recovered_rows["_original_index"],
+                    f"{col}_was_recovered",
+                ] = 1
+
+        data[col] = data[col].fillna(fallback)
+
+    return data
