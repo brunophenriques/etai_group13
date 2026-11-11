@@ -1,7 +1,8 @@
 """Preprocessing utilities for the ETAI classification project."""
 
 import pandas as pd
-from sklearn.impute import SimpleImputer
+from sklearn.impute import SimpleImputer, KNNImputer
+from sklearn.preprocessing import RobustScaler
 
 
 def prepare_rows(df: pd.DataFrame, config: dict) -> pd.DataFrame:
@@ -327,47 +328,136 @@ def apply_recency_imputer(
 
 
 
+
 def fit_numeric_imputers(
     train_df: pd.DataFrame,
     columns: list[str],
     strategy: str = "median",
+    knn_settings: dict | None = None,
 ) -> dict:
-    """Fit numeric imputers using training data only."""
+    """Fit numeric imputers using training-fold data only."""
 
-    if strategy not in {"mean", "median"}:
-        raise ValueError(
-            f"Unsupported numeric imputation strategy: {strategy}"
+    if strategy in {"mean", "median"}:
+        imputers = {}
+
+        for column in columns:
+            imputer = SimpleImputer(strategy=strategy)
+            imputer.fit(train_df[[column]])
+            imputers[column] = imputer
+
+        return imputers
+
+    if strategy == "knn":
+        if knn_settings is None:
+            raise ValueError("KNN settings are required.")
+
+        reference_columns = knn_settings.get(
+            "reference_columns", []
         )
 
-    imputers = {}
+        # Include targets for imputation and reference features.
+        feature_columns = list(
+            dict.fromkeys(columns + reference_columns)
+        )
 
-    for column in columns:
-        imputer = SimpleImputer(strategy=strategy)
+        missing_columns = [
+            col for col in feature_columns
+            if col not in train_df.columns
+        ]
 
-        imputer.fit(train_df[[column]])
+        if missing_columns:
+            raise ValueError(
+                f"KNN columns not found: {missing_columns}"
+            )
 
-        imputers[column] = imputer
+        if not all(
+            pd.api.types.is_numeric_dtype(train_df[col])
+            for col in feature_columns
+        ):
+            raise ValueError(
+                "KNN imputation requires numeric features."
+            )
 
-    return imputers
+        # Scaling matters because KNN uses distances.
+        scaler = RobustScaler()
+        scaled_train = scaler.fit_transform(
+            train_df[feature_columns]
+        )
+
+        imputer = KNNImputer(
+            n_neighbors=knn_settings.get("n_neighbors", 5),
+            weights=knn_settings.get("weights", "distance"),
+            keep_empty_features=True,
+        )
+
+        imputer.fit(scaled_train)
+
+        return {
+            "__knn__": {
+                "scaler": scaler,
+                "imputer": imputer,
+                "feature_columns": feature_columns,
+                "target_columns": columns,
+            }
+        }
+
+    raise ValueError(
+        f"Unsupported numeric imputation strategy: {strategy}"
+    )
 
 
 def apply_numeric_imputers(
     df: pd.DataFrame,
     imputers: dict,
 ) -> pd.DataFrame:
-    """
-    Apply previously fitted imputers.
+    """Apply previously fitted numeric imputers."""
 
-    Never calls fit() on validation or test data.
-    """
     data = df.copy()
 
-    for col, imputer in imputers.items():
-        data[col] = imputer.transform(
-            data[[col]]
+    if "__knn__" in imputers:
+        settings = imputers["__knn__"]
+
+        feature_columns = settings["feature_columns"]
+        target_columns = settings["target_columns"]
+
+        scaler = settings["scaler"]
+        imputer = settings["imputer"]
+
+        scaled = scaler.transform(
+            data[feature_columns]
+        )
+
+        imputed_scaled = imputer.transform(scaled)
+
+        imputed_values = scaler.inverse_transform(
+            imputed_scaled
+        )
+
+        imputed_df = pd.DataFrame(
+            imputed_values,
+            columns=feature_columns,
+            index=data.index,
+        )
+
+        # Only fill missing values in configured columns.
+        # All original observed values are preserved.
+        for column in target_columns:
+            missing_mask = data[column].isna()
+
+            data.loc[missing_mask, column] = (
+                imputed_df.loc[missing_mask, column]
+            )
+
+        return data
+
+    # Original mean / median behavior
+    for column, imputer in imputers.items():
+        data[column] = imputer.transform(
+            data[[column]]
         ).ravel()
 
     return data
+
 
 
 def clean_spend_365d(

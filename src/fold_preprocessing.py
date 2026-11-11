@@ -28,7 +28,7 @@ def prepare_numeric_fold(train_fold, val_fold, config):
     settings = config["preprocessing"]["numeric_imputation"]
 
     # Validate imputation configuration
-    if settings["strategy"] not in {"mean", "median"}:
+    if settings["strategy"] not in {"mean", "median", "knn"}:
         raise ValueError(
             f"Unsupported numeric imputation strategy: {settings['strategy']}"
         )
@@ -71,8 +71,8 @@ def prepare_numeric_fold(train_fold, val_fold, config):
         train,
         columns,
         strategy=settings["strategy"],
+        knn_settings=settings.get("knn"),
     )
-
     # 6. Apply the fitted imputers to both datasets
     train = apply_numeric_imputers(
         train,

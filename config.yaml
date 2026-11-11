@@ -1,4 +1,14 @@
 
+# ============================================================
+# ETAI GROUP 13
+# MACHINE LEARNING PIPELINE CONFIGURATION
+# ============================================================
+
+
+# ============================================================
+# 1. DATA PATHS
+# ============================================================
+
 paths:
   train: Project_data/train.csv
   test: Project_data/test.csv
@@ -7,21 +17,49 @@ paths:
   models: models/
   results: results/
 
+
+# ============================================================
+# 2. TARGET COLUMNS
+# ============================================================
+
 columns:
   customer_id: customer_id
   classification_target: repeat_purchase_90d
   regression_target: spend_next_90d
 
+
+# ============================================================
+# 3. TEMPORAL VALIDATION
+# ============================================================
+
 validation:
-  strategy: expanding_window
+  strategy: sliding_window
   target_horizon_days: 90
   cv_years: [2020, 2021, 2022, 2023]
   holdout_year: 2024
 
+  sliding_window:
+    train_years: 3
+
+
+# ============================================================
+# 4. REPRODUCIBILITY
+# ============================================================
+
 random_state: 42
 
+
+# ============================================================
+# 5. PREPROCESSING
+# ============================================================
+
 preprocessing:
+
   drop_rows_without_purchase_date: true
+
+  # ----------------------------------------------------------
+  # Feature selection
+  # ----------------------------------------------------------
 
   feature_selection:
     drop_columns:
@@ -29,17 +67,28 @@ preprocessing:
       - customer_id
       - random_noise
 
+  # ----------------------------------------------------------
+  # Date features
+  # ----------------------------------------------------------
+
   date_features:
     source_column: purchase_date
+
     extract:
       - year
       - month
       - day_of_week
+
     drop_original_from_model: true
+
+  # ----------------------------------------------------------
+  # Historical gaps
+  # ----------------------------------------------------------
 
   historical_gaps:
     negative_values_strategy: treat_as_missing
     add_correction_indicator: true
+
     insufficient_history_value: 0
     add_missing_indicator: true
     unexpected_missing_strategy: median
@@ -51,13 +100,20 @@ preprocessing:
       minimum_prior_purchases: 3
       insufficient_history_value: 0
 
+  # ----------------------------------------------------------
+  # Historical purchase values
+  # ----------------------------------------------------------
+
   historical_purchase_values:
+
     mean:
       minimum_prior_purchases: 1
       insufficient_history_value: 0
+
       unexpected_missing_strategy: formula
       correct_inconsistent_values: false
       consistency_tolerance: 0.01
+
       add_missing_indicator: true
       add_correction_indicator: true
 
@@ -74,30 +130,65 @@ preprocessing:
       inconsistent_strategy: median
       add_correction_indicator: true
 
+  # ----------------------------------------------------------
+  # Recency recovery
+  # ----------------------------------------------------------
+
   recency:
     insufficient_history_value: 0
+
     recover_from_previous_date: true
     fallback_strategy: median
+
     add_missing_indicator: true
     add_recovery_indicator: true
 
+  # ----------------------------------------------------------
+  # 365-day spending cleaning
+  # ----------------------------------------------------------
+
   spend_365d:
     zero_when_no_purchases: true
+
     unexpected_missing_strategy: median
     add_missing_indicator: true
+
     sentinel_value: 1000000000
     sentinel_strategy: treat_as_missing
+
     negative_values_strategy: treat_as_missing
     add_correction_indicator: true
 
+  # ----------------------------------------------------------
+  # Numeric imputation
+  # ----------------------------------------------------------
+
   numeric_imputation:
-    strategy: mean
+
+    # Options: median, mean, knn
+    strategy: knn
+
     columns:
       - prior_mean_gap_days
       - days_since_previous_purchase
       - spend_365d
       - prior_max_purchase_value
+
     fit_on: train_fold_only
+
+    knn:
+      n_neighbors: 5
+      weights: distance
+
+      reference_columns:
+        - prior_purchase_count
+        - customer_tenure_days
+        - purchase_count_90d
+        - spend_90d
+
+  # ----------------------------------------------------------
+  # Categorical missing values
+  # ----------------------------------------------------------
 
   categorical_missing:
     fallback_value: Unknown
@@ -110,6 +201,10 @@ preprocessing:
 
     keep_unknown:
       - transport_method
+
+  # ----------------------------------------------------------
+  # Categorical encoding
+  # ----------------------------------------------------------
 
   encoding:
     strategy: one_hot
@@ -127,30 +222,54 @@ preprocessing:
 
     rare_categories:
       enabled: true
+
       columns:
         - transport_method
+
       min_frequency: 20
       handle_unknown: infrequent_if_exist
 
+  # ----------------------------------------------------------
+  # Feature scaling
+  # ----------------------------------------------------------
+
   scaling:
     enabled: true
-    candidates: [standard, robust, passthrough]
+
+    candidates:
+      - standard
+      - robust
+      - passthrough
+
     default: robust
     apply_to: numeric_features
     fit_on: train_fold_only
 
+  # ----------------------------------------------------------
+  # Customer metadata
+  # ----------------------------------------------------------
+
   customer_metadata:
     enabled: false
 
+
+# ============================================================
+# 6. CLASSIFICATION MODELS
+# ============================================================
+
 modeling:
+
   task: classification
 
   models:
+
+    # Baseline reference
     dummy:
       enabled: true
       parameters:
         strategy: prior
 
+    # Linear model
     logistic_regression:
       enabled: true
       parameters:
@@ -158,11 +277,13 @@ modeling:
         max_iter: 5000
         C: 1.0
 
+    # Single tree
     decision_tree:
       enabled: true
       parameters:
         min_samples_leaf: 20
 
+    # Bagging ensemble
     random_forest:
       enabled: true
       parameters:
@@ -170,6 +291,7 @@ modeling:
         min_samples_leaf: 5
         n_jobs: -1
 
+    # Gradient boosting
     gradient_boosting:
       enabled: true
       parameters:
@@ -177,23 +299,373 @@ modeling:
         learning_rate: 0.1
         max_depth: 3
 
+    # Histogram-based gradient boosting
     hist_gradient_boosting:
       enabled: true
       parameters:
         max_iter: 100
         learning_rate: 0.1
         max_leaf_nodes: 15
+    
+    # ---------------------------------------------------------
+    # AdaBoost
+    # ---------------------------------------------------------
+
+    adaboost:
+      enabled: true
+      parameters:
+        n_estimators: 200
+        learning_rate: 0.05
+        random_state: 42
+
+    # ---------------------------------------------------------
+    # XGBoost
+    # ---------------------------------------------------------
+
+    xgboost:
+      enabled: true
+      parameters:
+        n_estimators: 300
+        max_depth: 4
+        learning_rate: 0.05
+        subsample: 0.8
+        colsample_bytree: 0.8
+        objective: binary:logistic
+        eval_metric: logloss
+        tree_method: hist
+        random_state: 42
+        n_jobs: -1
+
+    # ---------------------------------------------------------
+    # LightGBM
+    # ---------------------------------------------------------
+
+    lightgbm:
+      enabled: true
+      parameters:
+        n_estimators: 300
+        learning_rate: 0.05
+        num_leaves: 15
+        max_depth: 5
+        min_child_samples: 30
+        verbosity: -1
+        random_state: 42
+        n_jobs: -1
+
+    # ---------------------------------------------------------
+    # CatBoost
+    # ---------------------------------------------------------
+
+    catboost:
+      enabled: true
+      parameters:
+        iterations: 300
+        depth: 5
+        learning_rate: 0.05
+        loss_function: Logloss
+        random_seed: 42
+        verbose: false
+        allow_writing_files: false
+
+
+  # ----------------------------------------------------------
+  # Evaluation
+  # ----------------------------------------------------------
 
   evaluation:
     primary_metric: f1
+
     metrics:
       - f1
       - precision
       - recall
       - pr_auc
       - roc_auc
+
     classification_threshold: 0.5
+
+  # ----------------------------------------------------------
+  # Output
+  # ----------------------------------------------------------
 
   output:
     save_csv: true
     save_txt: true
+
+
+# ============================================================
+# 7. HYPERPARAMETER OPTIMIZATION
+# ============================================================
+
+hyperparameter_tuning:
+
+  threshold_optimization:
+    enabled: true
+    metric: f1
+    min_threshold: 0.20
+    max_threshold: 0.80
+    step: 0.025
+
+
+  enabled: true
+
+  # Options: randomized, grid, optuna
+  method: optuna
+
+  # Model to optimize
+  model: catboost
+
+  # Optimize the same metric as the competition
+  scoring: f1
+
+  random_state: 42
+
+  # ----------------------------------------------------------
+  # Nested Temporal Cross-Validation
+  # ----------------------------------------------------------
+
+  nested_cv:
+    enabled: true
+
+    outer:
+      strategy: sliding_window
+      use_validation_config: true
+
+    inner:
+      strategy: sliding_window
+      max_splits: 3
+      validation_window_days: 180
+      step_days: 180
+      target_horizon_days: 90
+      min_train_rows: 500
+      min_validation_rows: 100
+  # ----------------------------------------------------------
+  # RandomizedSearchCV
+  # ----------------------------------------------------------
+
+  randomized:
+    n_iter: 30
+    n_jobs: -1
+    verbose: 1
+
+  # ----------------------------------------------------------
+  # GridSearchCV
+  # ----------------------------------------------------------
+
+  grid:
+    n_jobs: -1
+    verbose: 1
+
+  # ----------------------------------------------------------
+  # Optuna
+  # ----------------------------------------------------------
+
+  optuna:
+    n_trials: 15
+    sampler: tpe
+    n_jobs: 1
+
+  # ----------------------------------------------------------
+  # Search spaces
+  # ----------------------------------------------------------
+
+  search_space:
+    
+    catboost:
+      optuna:
+        iterations:
+          type: int
+          low: 200
+          high: 600
+          step: 100
+
+        depth:
+          type: int
+          low: 3
+          high: 8
+
+        learning_rate:
+          type: float
+          low: 0.01
+          high: 0.2
+          log: true
+
+        l2_leaf_reg:
+          type: float
+          low: 1.0
+          high: 10.0
+
+        random_strength:
+          type: float
+          low: 0.0
+          high: 2.0
+
+
+    xgboost:
+      optuna:
+        n_estimators:
+          type: int
+          low: 100
+          high: 500
+          step: 100
+        max_depth:
+          type: int
+          low: 2
+          high: 6
+        learning_rate:
+          type: float
+          low: 0.01
+          high: 0.2
+          log: true
+        min_child_weight:
+          type: int
+          low: 1
+          high: 8
+        subsample:
+          type: float
+          low: 0.7
+          high: 1.0
+        colsample_bytree:
+          type: float
+          low: 0.7
+          high: 1.0
+
+    lightgbm:
+      optuna:
+        n_estimators:
+          type: int
+          low: 100
+          high: 500
+          step: 100
+        learning_rate:
+          type: float
+          low: 0.01
+          high: 0.2
+          log: true
+        num_leaves:
+          type: int
+          low: 7
+          high: 31
+        max_depth:
+          type: int
+          low: 3
+          high: 8
+        min_child_samples:
+          type: int
+          low: 15
+          high: 60
+
+    adaboost:
+      optuna:
+        n_estimators:
+          type: int
+          low: 50
+          high: 300
+          step: 50
+        learning_rate:
+          type: float
+          low: 0.01
+          high: 1.0
+          log: true
+
+    gradient_boosting:
+      optuna:
+        n_estimators:
+          type: int
+          low: 100
+          high: 400
+          step: 100
+        learning_rate:
+          type: float
+          low: 0.01
+          high: 0.2
+          log: true
+        max_depth:
+          type: int
+          low: 2
+          high: 5
+        min_samples_leaf:
+          type: int
+          low: 2
+          high: 20
+
+    hist_gradient_boosting:
+      optuna:
+        max_iter:
+          type: int
+          low: 100
+          high: 400
+          step: 100
+        learning_rate:
+          type: float
+          low: 0.01
+          high: 0.2
+          log: true
+        max_leaf_nodes:
+          type: int
+          low: 7
+          high: 31
+        min_samples_leaf:
+          type: int
+          low: 5
+          high: 30
+
+    logistic_regression:
+      optuna:
+        C:
+          type: float
+          low: 0.001
+          high: 100.0
+          log: true
+
+    random_forest:
+
+      randomized:
+        n_estimators: [100, 200, 300, 500]
+        max_depth: [null, 10, 20, 30]
+        min_samples_split: [2, 5, 10, 20]
+        min_samples_leaf: [1, 2, 5, 10]
+        max_features: [sqrt, log2]
+
+      grid:
+        n_estimators: [200, 300]
+        max_depth: [null, 20]
+        min_samples_leaf: [2, 5]
+        max_features: [sqrt, log2]
+
+      optuna:
+        n_estimators:
+          type: int
+          low: 100
+          high: 500
+          step: 50
+
+        max_depth:
+          type: categorical
+          choices: [null, 10, 20, 30]
+
+        min_samples_split:
+          type: int
+          low: 2
+          high: 20
+
+        min_samples_leaf:
+          type: int
+          low: 1
+          high: 10
+
+        max_features:
+          type: categorical
+          choices: [sqrt, log2]
+
+  # ----------------------------------------------------------
+  # Experiment outputs
+  # ----------------------------------------------------------
+
+  output:
+    save_csv: true
+    save_txt: true
+
+    save_all_trials: true
+    save_best_parameters: true
+    save_outer_fold_results: true

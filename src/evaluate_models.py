@@ -200,9 +200,12 @@ def run_evaluation():
             "Primary metric must be in evaluation.metrics."
         )
 
-    if config["validation"]["strategy"] != "expanding_window":
+    if config["validation"]["strategy"] not in {
+        "expanding_window",
+        "sliding_window",
+    }:
         raise ValueError(
-            "Only expanding_window validation is supported."
+            "Unsupported temporal validation strategy."
         )
 
     train, _, _ = load_data(config)
@@ -215,11 +218,17 @@ def run_evaluation():
 
     results = []
 
+
     for year, train_fold, val_fold in temporal_cv(
         train,
         years,
         horizon_days=horizon,
+        strategy=config["validation"]["strategy"],
+        train_years=config["validation"]
+            .get("sliding_window", {})
+            .get("train_years"),
     ):
+
         y_train = train_fold[target]
         y_val = val_fold[target]
 

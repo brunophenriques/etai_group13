@@ -1,0 +1,258 @@
+[
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/random_forest/tuning_2026-11-11_21-33-18-647653/tuning_summary.txt",
+    "sha256": "005542ebb391aa857ca6a581a12b4b03529ee5cd71c1b150e495e48c8632e9db"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/random_forest/tuning_2026-11-11_21-33-18-647653/comparison_summary.csv",
+    "sha256": "537f12ebd37c02cc9fc9e7976dfbe819d5e075a9d4073398a34e9b10cbbf5b09"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/random_forest/tuning_2026-11-11_21-33-18-647653/outer_results.csv",
+    "sha256": "717e522c0e1623be09a9f17177b511b07fc6f3e7f4339a2e819b068793087f9f"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/random_forest/tuning_2026-11-11_21-33-18-647653/trials.csv",
+    "sha256": "994cf10f3e059ef955dc0e198d0b641b2da61c607762fe47ba7d5ea3d4d17891"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/catboost/tuning_2026-11-11_21-35-14-288154/tuning_summary.txt",
+    "sha256": "4fd596acf8b74c6805a693491f7142f972f61e0c5c18fdf6b02e09e65419cd0b"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/catboost/tuning_2026-11-11_21-35-14-288154/comparison_summary.csv",
+    "sha256": "f12b9d59c55b82698673258a38011232d2b0dc39067120e7ab583ec9903c87ba"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/catboost/tuning_2026-11-11_21-35-14-288154/outer_results.csv",
+    "sha256": "49da7f6348016f9c18f65c941f716ef5ad36c6cd69d0ea903de7f700e5ee7a56"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/catboost/tuning_2026-11-11_21-35-14-288154/trials.csv",
+    "sha256": "dc5a51ca0dd747e110d672710a2d7b197e1c73f3463fc583574f42fcaa780cf7"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/xgboost/tuning_2026-11-11_21-39-59-479628/tuning_summary.txt",
+    "sha256": "8f493d10738fde8e18b59157399356fe779352af2c0f3b5c0a30c27630bd1329"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/xgboost/tuning_2026-11-11_21-39-59-479628/comparison_summary.csv",
+    "sha256": "f0585d2bec090e749f82b48eef797efac2d82339d0a8c6b2ac8cb95bff5184ff"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/xgboost/tuning_2026-11-11_21-39-59-479628/outer_results.csv",
+    "sha256": "f40282acc92405275c0dfb5589d49dd6a5c0be5012969d513e4f37d8ea5f9e28"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/xgboost/tuning_2026-11-11_21-39-59-479628/trials.csv",
+    "sha256": "2900f342f194f3aa628c66255f8b87d893d8eafdf5c5298ff598082f6fb7f5ad"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/lightgbm/tuning_2026-11-11_21-41-44-968869/tuning_summary.txt",
+    "sha256": "05d5075dde2785e51239f5ccd81e142827f6268e99264dd9d1f09ae75a520fc0"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/lightgbm/tuning_2026-11-11_21-41-44-968869/comparison_summary.csv",
+    "sha256": "06707636ca1649cd7cd0935f9be387c0aaf6aeb459d0d4c756bc118e9fd55c13"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/lightgbm/tuning_2026-11-11_21-41-44-968869/outer_results.csv",
+    "sha256": "61db1b172e7b40d5c950b69cc85da657706424f16de43c0b60b51db364c3c2d3"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/lightgbm/tuning_2026-11-11_21-41-44-968869/trials.csv",
+    "sha256": "68ddecf0f5f9a98cdce7ff5cd6cc91aa6f8852d6dd7cfaacb3b7ee7717d34c5c"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/adaboost/tuning_2026-11-11_21-42-32-837914/tuning_summary.txt",
+    "sha256": "1390493d1d1489e9ad73f0833ddabac3c77f93eba78bbeb9b5c84f67b4b12a43"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/adaboost/tuning_2026-11-11_21-42-32-837914/comparison_summary.csv",
+    "sha256": "3d994eeb20e82e0f1ca79ccaaf90d27b8b54f5306425bb0b4201f91326adc8d3"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/adaboost/tuning_2026-11-11_21-42-32-837914/outer_results.csv",
+    "sha256": "4a64d4f6a5a50f8eb5dde019ca7aa7384a7c86485070427404bc51ad1514f634"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/adaboost/tuning_2026-11-11_21-42-32-837914/trials.csv",
+    "sha256": "8c245050c3510bee1158a1e0adfcc949983f99e68fe7d043f951ad04f3072f24"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/gradient_boosting/tuning_2026-11-11_21-45-45-071569/tuning_summary.txt",
+    "sha256": "6f42c2a3f7c66852d230d4a3c44c73497e74c9815113b5595ac165601313b5b7"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/gradient_boosting/tuning_2026-11-11_21-45-45-071569/comparison_summary.csv",
+    "sha256": "540208e19f6387d0ceeaf358e500afbfcad142e6d31cd166ceae0987046a80a7"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/gradient_boosting/tuning_2026-11-11_21-45-45-071569/outer_results.csv",
+    "sha256": "fbb68c62eabe6acd70b6e48fba21cb36125eb5ebcfa5a1fa1043aa76d77d8894"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/gradient_boosting/tuning_2026-11-11_21-45-45-071569/trials.csv",
+    "sha256": "0a0c2ec7d4e634d8ef3b2af5a2d53fde676c546c24faab27dd877c5360de404f"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/hist_gradient_boosting/tuning_2026-11-11_21-51-44-744822/tuning_summary.txt",
+    "sha256": "e9dda779311843da027690cd337813cdfd249fcd750553e755d4cd044c517638"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/hist_gradient_boosting/tuning_2026-11-11_21-51-44-744822/comparison_summary.csv",
+    "sha256": "17f6ea4fc4b72a80233ac6d3f815136da32942d17f12f7fe0cb1b6ff823fe203"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/hist_gradient_boosting/tuning_2026-11-11_21-51-44-744822/outer_results.csv",
+    "sha256": "f7bad2fa0e8ed62c6b3cd58a4def576d5b8004c5774cd3ed46e36b9dec254fa3"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/hist_gradient_boosting/tuning_2026-11-11_21-51-44-744822/trials.csv",
+    "sha256": "272979215f6a2f766cdd2ed42150c857c578ac39d95aab5d77786893f5e5dc3c"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/logistic_regression/tuning_2026-11-11_21-53-34-745221/tuning_summary.txt",
+    "sha256": "0b8321192cfb550f2884e579940d60a010018d18c24a06a8327f1841b38a3121"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/logistic_regression/tuning_2026-11-11_21-53-34-745221/comparison_summary.csv",
+    "sha256": "2b22ccd7e8caf1967eacf8681d979ea227619d2223d2ab09565801b6da1bee20"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/logistic_regression/tuning_2026-11-11_21-53-34-745221/outer_results.csv",
+    "sha256": "63d3e314dcde458fbbe546e5b1046d053a2720cd55a930bdb31e896fbba26a0a"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/3_years/logistic_regression/tuning_2026-11-11_21-53-34-745221/trials.csv",
+    "sha256": "a33989c0416ff17e3a336c36ad91086e257883aaf53b6e8c05e7ab2b9b6bc0ce"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/random_forest/tuning_2026-11-11_21-53-42-637178/tuning_summary.txt",
+    "sha256": "266e8961a7d93cb1e70a5c09b6c2cec86718c6d721261e38db44c25421f0beb3"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/random_forest/tuning_2026-11-11_21-53-42-637178/comparison_summary.csv",
+    "sha256": "f8d16b25386b73b1bf5600fcb9aa7e6ae8b6f13b740f0628069a3a0e13d6ff81"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/random_forest/tuning_2026-11-11_21-53-42-637178/outer_results.csv",
+    "sha256": "5ab65d43c976ad636acd0c3a505c81c8f667bb40f4bf39c6693939c3651bc31a"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/random_forest/tuning_2026-11-11_21-53-42-637178/trials.csv",
+    "sha256": "4c3c382a6f44cea3e14691995f9b330325822c3810a13cec4f50a60ffb549eff"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/catboost/tuning_2026-11-11_21-55-20-772601/tuning_summary.txt",
+    "sha256": "49c830ed5b8f5acb54c3dd40d32871661a68a8d89e4da8ae55914ec3a24b2363"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/catboost/tuning_2026-11-11_21-55-20-772601/comparison_summary.csv",
+    "sha256": "158102523229d852ab00d09467cdddbdd3e6e7a4f2dfdc47806bc578e79b783a"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/catboost/tuning_2026-11-11_21-55-20-772601/outer_results.csv",
+    "sha256": "10bd302ff4d457f0d82f15037f2195b42d258a47920fdc813f59acdc1bcbb71b"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/catboost/tuning_2026-11-11_21-55-20-772601/trials.csv",
+    "sha256": "d90fca36364df02e17b16e6bbf3f1f86f8f7ebccbf8c31b0524a904153ee48c9"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/xgboost/tuning_2026-11-11_22-00-12-858859/tuning_summary.txt",
+    "sha256": "c871a70470ac84f85ac36910edc55abc229e05330b421c22460e74cf29a9b27d"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/xgboost/tuning_2026-11-11_22-00-12-858859/comparison_summary.csv",
+    "sha256": "09baa8ab8f4f1c906050644de12b43d7e7776ae9a89971f871bd0083c9085cdd"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/xgboost/tuning_2026-11-11_22-00-12-858859/outer_results.csv",
+    "sha256": "7e737f10b019cde466fa92bf1e3a8a68dd5d0df8a6eec08fc3e6ef61b05e7d68"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/xgboost/tuning_2026-11-11_22-00-12-858859/trials.csv",
+    "sha256": "ed7e33f143088298c7d63a3edbcf0345917598c0a1f02c079ff338cca8e25054"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/lightgbm/tuning_2026-11-11_22-01-52-631359/tuning_summary.txt",
+    "sha256": "d4aaa6a251f85547597db34852bde2deacd2158bb1ca4b99eaa81d51a80e82a5"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/lightgbm/tuning_2026-11-11_22-01-52-631359/comparison_summary.csv",
+    "sha256": "51f84e137a81ae46d6039656c8aaa3f486c3c9e624f0e0d0592537429707435a"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/lightgbm/tuning_2026-11-11_22-01-52-631359/outer_results.csv",
+    "sha256": "e10c3a6b9dca78a85ce73f3da34c1cb0733332b1710ad0e0e4a05c242cbf8d7d"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/lightgbm/tuning_2026-11-11_22-01-52-631359/trials.csv",
+    "sha256": "c01071535694be84c36fbc8e4f17ee81ba03e828e91571e7fcf236cd4db90074"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/adaboost/tuning_2026-11-11_22-02-31-179349/tuning_summary.txt",
+    "sha256": "9d46c19afce86f1b33e2c95f4ca8d93e3c14c04789cf87e43ee5ee7c1690bfe3"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/adaboost/tuning_2026-11-11_22-02-31-179349/comparison_summary.csv",
+    "sha256": "5c9920f6266d60ca037b2640ae8ab930091b8839a156953c418a4ab02c4a0fb8"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/adaboost/tuning_2026-11-11_22-02-31-179349/outer_results.csv",
+    "sha256": "66710cfae0e8486f3e413fdf60f662b4ffc5d0b33ba21f12aaef85e65db572b1"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/adaboost/tuning_2026-11-11_22-02-31-179349/trials.csv",
+    "sha256": "550708177a21165d1c7c1307e95a377e8d8ef16871efdc6b869de2571311a6f0"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/gradient_boosting/tuning_2026-11-11_22-05-11-664859/tuning_summary.txt",
+    "sha256": "0069a731add73d91f502009ff701dd6703f8c1eda5a5e3c27cedd5cf8bf10b08"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/gradient_boosting/tuning_2026-11-11_22-05-11-664859/comparison_summary.csv",
+    "sha256": "937793d0be3603cc69b13f2c3f7877057aaebee99b3bb3278d498635b260fd4c"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/gradient_boosting/tuning_2026-11-11_22-05-11-664859/outer_results.csv",
+    "sha256": "c08b532359be6430e693cd88160622ac04830fc315c3169dba0c30bd4a267e14"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/gradient_boosting/tuning_2026-11-11_22-05-11-664859/trials.csv",
+    "sha256": "65a4a336ab555eccb01d9e87fba97f81366fbf709cfca8250a382f5f2467af99"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/hist_gradient_boosting/tuning_2026-11-11_22-10-25-471291/tuning_summary.txt",
+    "sha256": "93ff044396a4f9d0be936570dc994d8bf72d7fa7def1c010d7e79438b815577d"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/hist_gradient_boosting/tuning_2026-11-11_22-10-25-471291/comparison_summary.csv",
+    "sha256": "a4aa2e7a1687c37cc8a0cb1bec1e8cffad26384d3a63ed45c0bf86fac2acf787"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/hist_gradient_boosting/tuning_2026-11-11_22-10-25-471291/outer_results.csv",
+    "sha256": "446824fabf19510753b6d93dfe66fe8563f57c5de0f62704b0990683402f0e32"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/hist_gradient_boosting/tuning_2026-11-11_22-10-25-471291/trials.csv",
+    "sha256": "537cd356fe2debdd46052337270f821d23fc64bfe42e4c0f541276615604aecd"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/logistic_regression/tuning_2026-11-11_22-12-46-824056/tuning_summary.txt",
+    "sha256": "6fd00bd05bef6a7713489a5ab28473fc03d1d3b9763637dc595dfdbfe36dbe08"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/logistic_regression/tuning_2026-11-11_22-12-46-824056/comparison_summary.csv",
+    "sha256": "589b3c550d14766cd92375db8bc57f96cb859d10a813b9007b0c2ccf021a43b3"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/logistic_regression/tuning_2026-11-11_22-12-46-824056/outer_results.csv",
+    "sha256": "177c682ed357f5cded12987c0d4194b4f8da888bc0f7bc53c7e24a448f0a6e2a"
+  },
+  {
+    "path": "results/tuning/configured_sliding_batch_2026-11-11/2_years/logistic_regression/tuning_2026-11-11_22-12-46-824056/trials.csv",
+    "sha256": "72061d841a0b7f8cd70e7086a076905119381a758fcf1e5733a3d618a071aa3d"
+  }
+]

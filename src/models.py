@@ -7,6 +7,10 @@ from sklearn.ensemble import (
     GradientBoostingClassifier,
     HistGradientBoostingClassifier,
 )
+from sklearn.ensemble import AdaBoostClassifier
+from xgboost import XGBClassifier
+from lightgbm import LGBMClassifier
+from catboost import CatBoostClassifier
 
 MODEL_REGISTRY = {
     "dummy": DummyClassifier,
@@ -15,6 +19,10 @@ MODEL_REGISTRY = {
     "random_forest": RandomForestClassifier,
     "gradient_boosting": GradientBoostingClassifier,
     "hist_gradient_boosting": HistGradientBoostingClassifier,
+    "adaboost": AdaBoostClassifier,
+    "xgboost": XGBClassifier,
+    "lightgbm": LGBMClassifier,
+    "catboost": CatBoostClassifier,
 }
 
 

@@ -1,0 +1,5 @@
+outer_year,model,method,inner_f1,outer_f1,inner_folds,best_parameters
+2020,random_forest,randomized,0.7578179956633543,0.729381443298969,3,"{'n_estimators': 200, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 'sqrt', 'max_depth': 20}"
+2021,random_forest,randomized,0.7460374900768358,0.7289940828402367,3,"{'n_estimators': 100, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': None}"
+2022,random_forest,randomized,0.7525184229091959,0.7153502235469449,3,"{'n_estimators': 100, 'min_samples_split': 20, 'min_samples_leaf': 10, 'max_features': 'log2', 'max_depth': None}"
+2023,random_forest,randomized,0.7502115500589902,0.757192174913694,3,"{'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 10, 'max_features': 'log2', 'max_depth': 30}"
