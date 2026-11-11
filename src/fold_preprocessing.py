@@ -1,30 +1,36 @@
 
+"""Coordinate numeric and categorical preprocessing within temporal folds."""
+
 from src.preprocessing import (
+    apply_numeric_imputers,
+    clean_historical_gaps,
+    clean_prior_max_purchase_value,
+    clean_spend_365d,
     fill_structural_missing,
+    fit_numeric_imputers,
+    recover_categorical_missing,
     recover_historical_mean,
     recover_recency,
-    clean_spend_365d,
-    clean_prior_max_purchase_value,
-    fit_numeric_imputers,
-    apply_numeric_imputers,
-    recover_categorical_missing,
 )
 
 
 def prepare_numeric_fold(train_fold, val_fold, config):
     """
-    Prepare numeric data for one temporal CV fold.
+    Prepare numeric and categorical data for one temporal CV fold.
 
-    Imputers are fitted only on the training fold.
-    Historical recency recovery uses training-fold
-    transactions as reference history.
+    Numeric imputation supports mean and median.
+    Imputers are fitted exclusively on the training fold.
+
+    Historical recovery uses training-fold transactions
+    as reference history to avoid temporal leakage.
     """
 
     settings = config["preprocessing"]["numeric_imputation"]
 
-    if settings["strategy"] != "median":
+    # Validate imputation configuration
+    if settings["strategy"] not in {"mean", "median"}:
         raise ValueError(
-            "Only median numeric imputation is supported."
+            f"Unsupported numeric imputation strategy: {settings['strategy']}"
         )
 
     if settings["fit_on"] != "train_fold_only":
@@ -48,22 +54,26 @@ def prepare_numeric_fold(train_fold, val_fold, config):
     train = recover_recency(train, history, config)
     val = recover_recency(val, history, config)
 
-    # 4. Clean invalid numerical values
+    # 4. Clean invalid numeric values
     train = clean_spend_365d(train, config)
     val = clean_spend_365d(val, config)
 
     train = clean_prior_max_purchase_value(train, config)
     val = clean_prior_max_purchase_value(val, config)
 
-    # 5. Fit numeric imputers on training fold only
+    train = clean_historical_gaps(train, config)
+    val = clean_historical_gaps(val, config)
+
+    # 5. Fit numeric imputers on the training fold only
     columns = settings["columns"]
 
     imputers = fit_numeric_imputers(
         train,
         columns,
+        strategy=settings["strategy"],
     )
 
-    # 6. Apply fitted imputers to both datasets
+    # 6. Apply the fitted imputers to both datasets
     train = apply_numeric_imputers(
         train,
         imputers,
@@ -74,15 +84,17 @@ def prepare_numeric_fold(train_fold, val_fold, config):
         imputers,
     )
 
-        # 7. Recover categorical values from past records
+    # 7. Recover categorical values using past records
     train = recover_categorical_missing(
-        train, train_fold, config
+        train,
+        train_fold,
+        config,
     )
 
     val = recover_categorical_missing(
-        val, train_fold, config
+        val,
+        train_fold,
+        config,
     )
 
     return train, val, imputers
-
-

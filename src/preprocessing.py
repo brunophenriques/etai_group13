@@ -1,7 +1,7 @@
-
 """Preprocessing utilities for the ETAI classification project."""
 
 import pandas as pd
+from sklearn.impute import SimpleImputer
 
 
 def prepare_rows(df: pd.DataFrame, config: dict) -> pd.DataFrame:
@@ -225,7 +225,6 @@ def recover_historical_mean(
     return data
 
 
-
 def recover_recency(
     df: pd.DataFrame,
     history: pd.DataFrame,
@@ -299,8 +298,6 @@ def recover_recency(
 
     return merged
 
-from sklearn.impute import SimpleImputer
-
 
 def fit_recency_imputer(train_df: pd.DataFrame):
     """Fit a recency imputer using training rows only."""
@@ -329,28 +326,27 @@ def apply_recency_imputer(
     return data
 
 
+
 def fit_numeric_imputers(
     train_df: pd.DataFrame,
     columns: list[str],
+    strategy: str = "median",
 ) -> dict:
-    """
-    Fit one median imputer per column.
+    """Fit numeric imputers using training data only."""
 
-    IMPORTANT: train_df must contain only
-    the training rows of the current fold.
-    """
+    if strategy not in {"mean", "median"}:
+        raise ValueError(
+            f"Unsupported numeric imputation strategy: {strategy}"
+        )
+
     imputers = {}
 
-    for col in columns:
-        if train_df[col].notna().sum() == 0:
-            raise ValueError(
-                f"Cannot fit imputer: {col} is entirely missing."
-            )
+    for column in columns:
+        imputer = SimpleImputer(strategy=strategy)
 
-        imputer = SimpleImputer(strategy="median")
-        imputer.fit(train_df[[col]])
+        imputer.fit(train_df[[column]])
 
-        imputers[col] = imputer
+        imputers[column] = imputer
 
     return imputers
 
@@ -372,7 +368,6 @@ def apply_numeric_imputers(
         ).ravel()
 
     return data
-
 
 
 def clean_spend_365d(
@@ -409,7 +404,6 @@ def clean_spend_365d(
     data.loc[correction_mask, column] = float("nan")
 
     return data
-
 
 
 def clean_prior_max_purchase_value(
@@ -457,7 +451,6 @@ def clean_prior_max_purchase_value(
     data.loc[correction_mask, column] = float("nan")
 
     return data
-
 
 
 def recover_categorical_missing(
@@ -541,5 +534,24 @@ def recover_categorical_missing(
                 ] = 1
 
         data[col] = data[col].fillna(fallback)
+
+    return data
+
+def clean_historical_gaps(df: pd.DataFrame, config: dict) -> pd.DataFrame:
+    """Replace negative historical gaps with missing values."""
+
+    data = df.copy()
+    settings = config["preprocessing"]["historical_gaps"]
+
+    if settings["negative_values_strategy"] != "treat_as_missing":
+        raise ValueError("Unsupported negative gap strategy.")
+
+    for column in ["prior_mean_gap_days", "prior_std_gap_days"]:
+        invalid = data[column].notna() & (data[column] < 0)
+
+        if settings["add_correction_indicator"]:
+            data[f"{column}_was_corrected"] = invalid.astype(int)
+
+        data.loc[invalid, column] = float("nan")
 
     return data

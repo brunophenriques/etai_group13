@@ -1,13 +1,9 @@
+"""Fit encoders and scalers on training folds; apply without refitting."""
 
 import numpy as np
 import pandas as pd
-
 from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import (
-    OneHotEncoder,
-    RobustScaler,
-    StandardScaler,
-)
+from sklearn.preprocessing import OneHotEncoder, RobustScaler, StandardScaler
 
 from src.preprocessing import prepare_model_features
 

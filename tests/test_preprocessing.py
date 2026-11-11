@@ -1,9 +1,5 @@
-
 from src.data_loader import load_config, load_data
-from src.preprocessing import (
-    prepare_rows,
-    prepare_model_features,
-)
+from src.preprocessing import prepare_model_features, prepare_rows
 
 config = load_config()
 

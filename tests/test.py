@@ -1,7 +1,7 @@
-from src.data_loader import load_config, load_data
-from src.validation import temporal_split
 import pandas as pd
-from src.validation import temporal_cv
+
+from src.data_loader import load_config, load_data
+from src.validation import temporal_cv, temporal_split
 
 config = load_config()
 train, _, _ = load_data(config)

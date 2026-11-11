@@ -1,5 +1,20 @@
 # etai_group13
 
+Academic machine learning project with leakage-safe preprocessing and temporal
+cross-validation. Configuration lives in [`config.yaml`](config.yaml).
+
+## Project layout
+
+- `src/`: data loading, preprocessing, feature transformation, and temporal splits.
+- `tests/`: regression checks and exploratory diagnostics.
+- `docs/`: [project structure and preprocessing workflow](docs/README.md).
+- `results/`: configured destination for evaluation artifacts.
+- `notebooks/`: exploratory data analysis.
+- `Project_data/`: raw CSV datasets referenced by the configuration.
+
+Run all existing checks with `python -m tests` from the repository root after
+activating the environment. See [verification instructions](tests/README.md).
+
 ## Virtual Environment Setup
 
 ### 1. Create a virtual environment

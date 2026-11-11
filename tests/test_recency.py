@@ -1,8 +1,17 @@
+"""Check recency recovery, numeric imputation, and historical spending consistency."""
+
+import pandas as pd
 
 from src.data_loader import load_config, load_data
 from src.preprocessing import (
-    prepare_rows,
+    apply_numeric_imputers,
+    apply_recency_imputer,
+    clean_prior_max_purchase_value,
+    clean_spend_365d,
     fill_structural_missing,
+    fit_numeric_imputers,
+    fit_recency_imputer,
+    prepare_rows,
     recover_recency,
 )
 
@@ -52,15 +61,6 @@ assert processed["days_since_previous_purchase"].isna().sum() == 1
 print("\nRecency recovery passed.")
 
 
-from src.data_loader import load_config, load_data
-from src.preprocessing import (
-    prepare_rows,
-    fill_structural_missing,
-    recover_recency,
-    fit_recency_imputer,
-    apply_recency_imputer,
-)
-
 config = load_config()
 train, _, _ = load_data(config)
 
@@ -94,17 +94,6 @@ assert processed.loc[
 
 print("\nRecency imputation passed.")
 
-
-
-import pandas as pd
-
-from src.data_loader import load_config, load_data
-from src.preprocessing import (
-    prepare_rows,
-    fill_structural_missing,
-    fit_numeric_imputers,
-    apply_numeric_imputers,
-)
 
 config = load_config()
 train, _, _ = load_data(config)
@@ -172,16 +161,6 @@ assert result[column].iloc[0] == 9999.0
 print("\nAll numeric imputation tests passed.")
 
 
-
-from src.data_loader import load_config, load_data
-from src.preprocessing import (
-    prepare_rows,
-    fill_structural_missing,
-    clean_spend_365d,
-    fit_numeric_imputers,
-    apply_numeric_imputers,
-)
-
 config = load_config()
 train, _, _ = load_data(config)
 
@@ -225,15 +204,6 @@ assert processed.loc[valid, column].equals(
 
 print("\nSpend 365d tests passed.")
 
-
-from src.data_loader import load_config, load_data
-from src.preprocessing import (
-    prepare_rows,
-    fill_structural_missing,
-    clean_prior_max_purchase_value,
-    fit_numeric_imputers,
-    apply_numeric_imputers,
-)
 
 config = load_config()
 train, _, _ = load_data(config)

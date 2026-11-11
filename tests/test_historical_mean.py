@@ -1,8 +1,7 @@
-
 from src.data_loader import load_config, load_data
 from src.preprocessing import (
-    prepare_rows,
     fill_structural_missing,
+    prepare_rows,
     recover_historical_mean,
 )
 

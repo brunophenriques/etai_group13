@@ -1,7 +1,4 @@
-import pandas as pd
-
 from src.data_loader import load_config, load_data
-
 
 config = load_config()
 train, _, _ = load_data(config)
@@ -38,8 +35,6 @@ train = train.loc[train["purchase_date"].notna()].copy()
 #         f"{subset['prior_mean_gap_days'].isna().sum()} missing "
 #         f"out of {len(subset)} rows"
 #     )
-
-
 
 
 # cols = [

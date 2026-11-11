@@ -1,16 +1,11 @@
-
 import numpy as np
 import pandas as pd
 
 from src.data_loader import load_config, load_data
+from src.feature_transformer import apply_feature_transformer, fit_feature_transformer
+from src.fold_preprocessing import prepare_numeric_fold
 from src.preprocessing import prepare_rows
 from src.validation import temporal_cv
-from src.fold_preprocessing import prepare_numeric_fold
-from src.feature_transformer import (
-    fit_feature_transformer,
-    apply_feature_transformer,
-)
-
 
 config = load_config()
 train, _, _ = load_data(config)

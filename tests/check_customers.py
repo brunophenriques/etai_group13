@@ -1,6 +1,6 @@
+import pandas as pd
 
 from src.data_loader import load_config, load_data
-import pandas as pd
 
 config = load_config()
 train, _, customers = load_data(config)

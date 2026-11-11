@@ -1,3 +1,5 @@
+"""Create expanding-window splits with a gap for target-label availability."""
+
 import pandas as pd
 
 

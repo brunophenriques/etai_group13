@@ -1,0 +1,184 @@
+ETAI GROUP 13
+CLASSIFICATION RESULTS
+=================================================================
+
+EXPERIMENT INFORMATION
+-----------------------------------------------------------------
+Date: 2026-11-11_16-24-41-817014
+Target: repeat_purchase_90d
+Validation: expanding_window
+CV years: [2020, 2021, 2022, 2023]
+Target horizon: 90 days
+Primary metric: f1
+Classification threshold: 0.5
+
+ACTIVE MODELS
+-----------------------------------------------------------------
+dummy
+  Parameters: {'strategy': 'prior'}
+logistic_regression
+  Parameters: {'solver': 'liblinear', 'max_iter': 5000, 'C': 1.0}
+decision_tree
+  Parameters: {'min_samples_leaf': 20}
+random_forest
+  Parameters: {'n_estimators': 200, 'min_samples_leaf': 5, 'n_jobs': -1}
+gradient_boosting
+  Parameters: {'n_estimators': 100, 'learning_rate': 0.1, 'max_depth': 3}
+hist_gradient_boosting
+  Parameters: {'max_iter': 100, 'learning_rate': 0.1, 'max_leaf_nodes': 15}
+
+CROSS-VALIDATION SUMMARY
+-----------------------------------------------------------------
+                 model  f1_mean  f1_std  precision_mean  precision_std  recall_mean  recall_std  pr_auc_mean  pr_auc_std  roc_auc_mean  roc_auc_std
+         random_forest   0.7411  0.0192          0.7375         0.0547       0.7479      0.0238       0.8393      0.0223        0.7861       0.0308
+                 dummy   0.7097  0.0430          0.5513         0.0507       1.0000      0.0000       0.5513      0.0507        0.5000       0.0000
+hist_gradient_boosting   0.7050  0.0286          0.7526         0.0833       0.6731      0.0690       0.8306      0.0223        0.7714       0.0258
+         decision_tree   0.6951  0.0324          0.6695         0.0410       0.7251      0.0511       0.7726      0.0321        0.7180       0.0296
+   logistic_regression   0.6951  0.0164          0.7941         0.0803       0.6258      0.0614       0.8334      0.0278        0.7762       0.0354
+     gradient_boosting   0.6908  0.0443          0.7572         0.0808       0.6539      0.1241       0.8210      0.0198        0.7606       0.0222
+
+DETAILED RESULTS BY FOLD
+-----------------------------------------------------------------
+ fold                  model  train_rows  validation_rows  features  train_positive_rate  val_positive_rate     f1  precision  recall  pr_auc  roc_auc
+ 2020                  dummy        2578              670       110               0.5597             0.5940 0.7453     0.5940  1.0000  0.5940   0.5000
+ 2020    logistic_regression        2578              670       110               0.5597             0.5940 0.6734     0.7973  0.5829  0.8205   0.7269
+ 2020          decision_tree        2578              670       110               0.5597             0.5940 0.7357     0.6855  0.7940  0.7370   0.6757
+ 2020          random_forest        2578              670       110               0.5597             0.5940 0.7443     0.7500  0.7387  0.8297   0.7403
+ 2020      gradient_boosting        2578              670       110               0.5597             0.5940 0.7470     0.7114  0.7864  0.8065   0.7285
+ 2020 hist_gradient_boosting        2578              670       110               0.5597             0.5940 0.7179     0.7591  0.6809  0.8272   0.7379
+ 2021                  dummy        3234              782       114               0.5529             0.5486 0.7085     0.5486  1.0000  0.5486   0.5000
+ 2021    logistic_regression        3234              782       114               0.5529             0.5486 0.6965     0.8706  0.5804  0.8567   0.8101
+ 2021          decision_tree        3234              782       114               0.5529             0.5486 0.6948     0.6631  0.7296  0.8010   0.7435
+ 2021          random_forest        3234              782       114               0.5529             0.5486 0.7556     0.7582  0.7529  0.8535   0.8069
+ 2021      gradient_boosting        3234              782       114               0.5529             0.5486 0.6400     0.8266  0.5221  0.8312   0.7750
+ 2021 hist_gradient_boosting        3234              782       114               0.5529             0.5486 0.7392     0.7868  0.6970  0.8520   0.8006
+ 2022                  dummy        4004              628       121               0.5624             0.4809 0.6495     0.4809  1.0000  0.4809   0.5000
+ 2022    logistic_regression        4004              628       121               0.5624             0.4809 0.6969     0.6825  0.7119  0.8003   0.7784
+ 2022          decision_tree        4004              628       121               0.5624             0.4809 0.6563     0.6163  0.7020  0.7538   0.7312
+ 2022          random_forest        4004              628       121               0.5624             0.4809 0.7132     0.6583  0.7781  0.8127   0.7972
+ 2022      gradient_boosting        4004              628       121               0.5624             0.4809 0.6962     0.6667  0.7285  0.8026   0.7759
+ 2022 hist_gradient_boosting        4004              628       121               0.5624             0.4809 0.6830     0.6353  0.7384  0.8008   0.7758
+ 2023                  dummy        4705              767       129               0.5535             0.5815 0.7354     0.5815  1.0000  0.5815   0.5000
+ 2023    logistic_regression        4705              767       129               0.5535             0.5815 0.7134     0.8260  0.6278  0.8562   0.7896
+ 2023          decision_tree        4705              767       129               0.5535             0.5815 0.6935     0.7133  0.6749  0.7985   0.7214
+ 2023          random_forest        4705              767       129               0.5535             0.5815 0.7515     0.7835  0.7220  0.8615   0.7998
+ 2023      gradient_boosting        4705              767       129               0.5535             0.5815 0.6798     0.8243  0.5785  0.8439   0.7632
+ 2023 hist_gradient_boosting        4705              767       129               0.5535             0.5815 0.6799     0.8290  0.5762  0.8423   0.7713
+
+EXPERIMENT CONFIGURATION
+-----------------------------------------------------------------
+{'paths': {'train': 'Project_data/train.csv',
+           'test': 'Project_data/test.csv',
+           'customers': 'Project_data/clientes.csv',
+           'processed': 'data/processed/',
+           'models': 'models/',
+           'results': 'results/'},
+ 'columns': {'customer_id': 'customer_id',
+             'classification_target': 'repeat_purchase_90d',
+             'regression_target': 'spend_next_90d'},
+ 'validation': {'strategy': 'expanding_window',
+                'target_horizon_days': 90,
+                'cv_years': [2020, 2021, 2022, 2023],
+                'holdout_year': 2024},
+ 'random_state': 42,
+ 'preprocessing': {'drop_rows_without_purchase_date': True,
+                   'feature_selection': {'drop_columns': ['ID', 'customer_id', 'random_noise']},
+                   'date_features': {'source_column': 'purchase_date',
+                                     'extract': ['year', 'month', 'day_of_week'],
+                                     'drop_original_from_model': True},
+                   'historical_gaps': {'negative_values_strategy': 'treat_as_missing',
+                                       'add_correction_indicator': True,
+                                       'insufficient_history_value': 0,
+                                       'add_missing_indicator': True,
+                                       'unexpected_missing_strategy': 'median',
+                                       'mean_gap': {'minimum_prior_purchases': 2},
+                                       'std_gap': {'minimum_prior_purchases': 3,
+                                                   'insufficient_history_value': 0}},
+                   'historical_purchase_values': {'mean': {'minimum_prior_purchases': 1,
+                                                           'insufficient_history_value': 0,
+                                                           'unexpected_missing_strategy': 'formula',
+                                                           'correct_inconsistent_values': False,
+                                                           'consistency_tolerance': 0.01,
+                                                           'add_missing_indicator': True,
+                                                           'add_correction_indicator': True},
+                                                  'std': {'minimum_prior_purchases': 2,
+                                                          'insufficient_history_value': 0},
+                                                  'min_max': {'minimum_prior_purchases': 1,
+                                                              'insufficient_history_value': 0},
+                                                  'max_consistency': {'check_against_total_spend': True,
+                                                                      'inconsistent_strategy': 'median',
+                                                                      'add_correction_indicator': True}},
+                   'recency': {'insufficient_history_value': 0,
+                               'recover_from_previous_date': True,
+                               'fallback_strategy': 'median',
+                               'add_missing_indicator': True,
+                               'add_recovery_indicator': True},
+                   'spend_365d': {'zero_when_no_purchases': True,
+                                  'unexpected_missing_strategy': 'median',
+                                  'add_missing_indicator': True,
+                                  'sentinel_value': 1000000000,
+                                  'sentinel_strategy': 'treat_as_missing',
+                                  'negative_values_strategy': 'treat_as_missing',
+                                  'add_correction_indicator': True},
+                   'numeric_imputation': {'strategy': 'median',
+                                          'columns': ['prior_mean_gap_days',
+                                                      'days_since_previous_purchase',
+                                                      'spend_365d',
+                                                      'prior_max_purchase_value'],
+                                          'fit_on': 'train_fold_only'},
+                   'categorical_missing': {'fallback_value': 'Unknown',
+                                           'add_missing_indicator': True,
+                                           'recover_from_customer_history': ['payment_type',
+                                                                             'warehouse',
+                                                                             'salesperson'],
+                                           'keep_unknown': ['transport_method']},
+                   'encoding': {'strategy': 'one_hot',
+                                'drop_first': False,
+                                'handle_unknown': 'ignore',
+                                'categorical_columns': ['payment_type',
+                                                        'warehouse',
+                                                        'salesperson',
+                                                        'commercial_zone',
+                                                        'document_series',
+                                                        'purchase_month',
+                                                        'purchase_day_of_week'],
+                                'rare_categories': {'enabled': True,
+                                                    'columns': ['transport_method'],
+                                                    'min_frequency': 20,
+                                                    'handle_unknown': 'infrequent_if_exist'}},
+                   'scaling': {'enabled': True,
+                               'candidates': ['standard', 'robust', 'passthrough'],
+                               'default': 'standard',
+                               'apply_to': 'numeric_features',
+                               'fit_on': 'train_fold_only'},
+                   'customer_metadata': {'enabled': False}},
+ 'modeling': {'task': 'classification',
+              'models': {'dummy': {'enabled': True, 'parameters': {'strategy': 'prior'}},
+                         'logistic_regression': {'enabled': True,
+                                                 'parameters': {'solver': 'liblinear',
+                                                                'max_iter': 5000,
+                                                                'C': 1.0}},
+                         'decision_tree': {'enabled': True, 'parameters': {'min_samples_leaf': 20}},
+                         'random_forest': {'enabled': True,
+                                           'parameters': {'n_estimators': 200,
+                                                          'min_samples_leaf': 5,
+                                                          'n_jobs': -1}},
+                         'gradient_boosting': {'enabled': True,
+                                               'parameters': {'n_estimators': 100,
+                                                              'learning_rate': 0.1,
+                                                              'max_depth': 3}},
+                         'hist_gradient_boosting': {'enabled': True,
+                                                    'parameters': {'max_iter': 100,
+                                                                   'learning_rate': 0.1,
+                                                                   'max_leaf_nodes': 15}}},
+              'evaluation': {'primary_metric': 'f1',
+                             'metrics': ['f1', 'precision', 'recall', 'pr_auc', 'roc_auc'],
+                             'classification_threshold': 0.5},
+              'output': {'save_csv': True, 'save_txt': True}}}
+
+NOTES
+-----------------------------------------------------------------
+Preprocessing is fitted separately on each training fold.
+Validation data is transformed without refitting learned imputers, encoders, or scalers.
+The 2024 holdout is excluded from cross-validation.
+Feature availability and leakage verification are not fully completed.

@@ -38,6 +38,8 @@ preprocessing:
     drop_original_from_model: true
 
   historical_gaps:
+    negative_values_strategy: treat_as_missing
+    add_correction_indicator: true
     insufficient_history_value: 0
     add_missing_indicator: true
     unexpected_missing_strategy: median
@@ -89,7 +91,7 @@ preprocessing:
     add_correction_indicator: true
 
   numeric_imputation:
-    strategy: median
+    strategy: mean
     columns:
       - prior_mean_gap_days
       - days_since_previous_purchase
@@ -132,13 +134,66 @@ preprocessing:
 
   scaling:
     enabled: true
-    candidates:
-      - standard
-      - robust
-      - passthrough
+    candidates: [standard, robust, passthrough]
     default: robust
     apply_to: numeric_features
     fit_on: train_fold_only
 
   customer_metadata:
     enabled: false
+
+modeling:
+  task: classification
+
+  models:
+    dummy:
+      enabled: true
+      parameters:
+        strategy: prior
+
+    logistic_regression:
+      enabled: true
+      parameters:
+        solver: liblinear
+        max_iter: 5000
+        C: 1.0
+
+    decision_tree:
+      enabled: true
+      parameters:
+        min_samples_leaf: 20
+
+    random_forest:
+      enabled: true
+      parameters:
+        n_estimators: 200
+        min_samples_leaf: 5
+        n_jobs: -1
+
+    gradient_boosting:
+      enabled: true
+      parameters:
+        n_estimators: 100
+        learning_rate: 0.1
+        max_depth: 3
+
+    hist_gradient_boosting:
+      enabled: true
+      parameters:
+        max_iter: 100
+        learning_rate: 0.1
+        max_leaf_nodes: 15
+
+  evaluation:
+    primary_metric: f1
+    metrics:
+      - f1
+      - precision
+      - recall
+      - pr_auc
+      - roc_auc
+    classification_threshold: 0.5
+
+  output:
+    save_csv: true
+    save_txt: true

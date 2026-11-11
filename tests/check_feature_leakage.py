@@ -1,5 +1,6 @@
-from src.data_loader import load_config, load_data
 import pandas as pd
+
+from src.data_loader import load_config, load_data
 
 config = load_config()
 train, _, _ = load_data(config)

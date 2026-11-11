@@ -1,13 +1,15 @@
+"""Load configuration and raw datasets relative to the project root."""
+
 from pathlib import Path
 
 import pandas as pd
 import yaml
 
-
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 
 def load_config():
+    """Read the central YAML configuration from the project root."""
     config_path = PROJECT_ROOT / "config.yaml"
 
     with config_path.open("r", encoding="utf-8") as file:
@@ -15,6 +17,7 @@ def load_config():
 
 
 def load_data(config):
+    """Return training transactions, test transactions, and customer metadata."""
     paths = config["paths"]
 
     train = pd.read_csv(PROJECT_ROOT / paths["train"])

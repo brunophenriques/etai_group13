@@ -1,8 +1,7 @@
-
 from src.data_loader import load_config, load_data
+from src.fold_preprocessing import prepare_numeric_fold
 from src.preprocessing import prepare_rows
 from src.validation import temporal_cv
-from src.fold_preprocessing import prepare_numeric_fold
 
 config = load_config()
 train, _, _ = load_data(config)

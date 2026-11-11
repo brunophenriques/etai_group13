@@ -1,9 +1,7 @@
-
 import pandas as pd
 
 from src.data_loader import load_config
 from src.preprocessing import recover_categorical_missing
-
 
 config = load_config()
 
