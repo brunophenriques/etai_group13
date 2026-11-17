@@ -1,5 +1,0 @@
-outer_year,model,method,inner_f1,outer_f1,inner_folds,best_parameters
-2020,random_forest,optuna,0.759332353535252,0.7363057324840764,3,"{'n_estimators': 100, 'max_depth': 10, 'min_samples_split': 11, 'min_samples_leaf': 1, 'max_features': 'sqrt'}"
-2021,random_forest,optuna,0.7437887806175615,0.7449584816132859,3,"{'n_estimators': 100, 'max_depth': None, 'min_samples_split': 6, 'min_samples_leaf': 1, 'max_features': 'log2'}"
-2022,random_forest,optuna,0.7515111236629591,0.7195121951219512,3,"{'n_estimators': 300, 'max_depth': 10, 'min_samples_split': 7, 'min_samples_leaf': 1, 'max_features': 'log2'}"
-2023,random_forest,optuna,0.7484149177598766,0.7378190255220418,3,"{'n_estimators': 150, 'max_depth': None, 'min_samples_split': 3, 'min_samples_leaf': 3, 'max_features': 'log2'}"
