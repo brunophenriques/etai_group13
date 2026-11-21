@@ -1,0 +1,35 @@
+column,kind,rows,raw_missing,structural_missing,unexpected_missing,invalid_corrected,remaining_after_rules
+Total a Pagar,numeric,5634,0,0,0,0,0
+Total Bruto,numeric,5634,0,0,0,0,0
+Total Liquido,numeric,5634,0,0,0,0,0
+Total Imp_,numeric,5634,0,0,0,0,0
+Total Portes,numeric,5634,0,0,0,0,0
+Total Desc_ Global,numeric,5634,0,0,0,0,0
+Total Desc_ Linha,numeric,5634,0,0,0,0,0
+Custo,numeric,5634,0,0,0,0,0
+N_ Detalhes,numeric,5634,0,0,0,0,0
+invoice_count_current_purchase,numeric,5634,0,0,0,0,0
+days_since_previous_purchase,numeric,5634,745,578,167,0,1
+customer_tenure_days,numeric,5634,0,0,0,0,0
+prior_purchase_count,numeric,5634,0,0,0,0,0
+prior_total_spend,numeric,5634,0,0,0,0,0
+prior_mean_purchase_value,numeric,5634,756,578,178,0,0
+prior_std_purchase_value,numeric,5634,1001,1001,0,0,0
+prior_min_purchase_value,numeric,5634,578,578,0,0,0
+prior_max_purchase_value,numeric,5634,578,578,0,41,41
+prior_mean_gap_days,numeric,5634,1174,1001,173,13,186
+prior_std_gap_days,numeric,5634,1344,1344,0,0,0
+purchase_count_30d,numeric,5634,0,0,0,0,0
+spend_30d,numeric,5634,0,0,0,0,0
+purchase_count_90d,numeric,5634,0,0,0,0,0
+spend_90d,numeric,5634,0,0,0,0,0
+purchase_count_180d,numeric,5634,0,0,0,0,0
+spend_180d,numeric,5634,0,0,0,0,0
+purchase_count_365d,numeric,5634,0,0,0,0,0
+spend_365d,numeric,5634,169,30,139,27,165
+payment_type,categorical,5634,174,0,174,0,174
+salesperson,categorical,5634,175,0,175,0,175
+commercial_zone,categorical,5634,0,0,0,0,0
+transport_method,categorical,5634,171,0,171,0,171
+warehouse,categorical,5634,170,0,170,0,170
+document_series,categorical,5634,0,0,0,0,0

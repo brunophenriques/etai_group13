@@ -1,0 +1,6 @@
+numeric,k,weights,categorical,label,candidate
+median,0,uniform,unknown,Median + Unknown,median_0_uniform__unknown
+median,0,uniform,mode,Median + mode,median_0_uniform__mode
+knn,5,uniform,unknown,KNN (k=5) + Unknown,knn_5_uniform__unknown
+knn,10,uniform,unknown,KNN (k=10) + Unknown,knn_10_uniform__unknown
+iterative,0,uniform,unknown,Iterative (BayesianRidge) + Unknown,iterative_0_uniform__unknown

@@ -1,0 +1,12 @@
+{
+  "missing_date_rows_excluded": 65,
+  "development_rows": 5634,
+  "unknown_returner_spend_development": 119,
+  "train_sha256": "93963c048b6be0da2b932714e938961c087db6aa6144903fbb3042bbdb37e5b5",
+  "versions": {
+    "numpy": "2.5.5",
+    "pandas": "3.1.1",
+    "scikit-learn": "1.9.1"
+  },
+  "note": "Selection scores, not unbiased final performance. Holdout/test excluded. Prior EDA saw full train."
+}

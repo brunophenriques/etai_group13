@@ -8,7 +8,7 @@ Run from the repository root after installing `requirements.txt`:
 
 On Linux/macOS, use `.venv/bin/python -m tests`.
 
-The runner executes all 14 existing scripts in separate Python processes, retains
+The runner discovers all check/test scripts (currently 18) in separate Python processes, retains
 their output and assertions, continues to report all failures, and exits nonzero
 if any script fails. Raw CSVs referenced by `config.yaml` must be available.
 These scripts execute checks at module level; they do not require pytest.
@@ -37,3 +37,8 @@ Individual scripts retain their existing module entry points, for example:
 ```
 
 Keep assertions enabled: do not run these checks with Python's `-O` option.
+
+`test_imputation_contract.py` covers median/KNN/iterative preprocessing, structural
+donor exclusion, empty columns, missing dates, unknown customers, label-free inputs,
+query batch independence, target isolation, serialization of complete task pipelines,
+and the declared selection tolerances. See `docs/imputation.md` for the experiment.

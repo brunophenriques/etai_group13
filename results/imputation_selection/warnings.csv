@@ -1,0 +1,21 @@
+fold,candidate,warning
+2020,median_0_uniform__unknown,Series.dt.dayofweek is deprecated and will be removed in a future version. Use Series.dt.day_of_week instead.
+2020,median_0_uniform__mode,Series.dt.dayofweek is deprecated and will be removed in a future version. Use Series.dt.day_of_week instead.
+2020,knn_5_uniform__unknown,Series.dt.dayofweek is deprecated and will be removed in a future version. Use Series.dt.day_of_week instead.
+2020,knn_10_uniform__unknown,Series.dt.dayofweek is deprecated and will be removed in a future version. Use Series.dt.day_of_week instead.
+2020,iterative_0_uniform__unknown,Series.dt.dayofweek is deprecated and will be removed in a future version. Use Series.dt.day_of_week instead.
+2021,median_0_uniform__unknown,Series.dt.dayofweek is deprecated and will be removed in a future version. Use Series.dt.day_of_week instead.
+2021,median_0_uniform__mode,Series.dt.dayofweek is deprecated and will be removed in a future version. Use Series.dt.day_of_week instead.
+2021,knn_5_uniform__unknown,Series.dt.dayofweek is deprecated and will be removed in a future version. Use Series.dt.day_of_week instead.
+2021,knn_10_uniform__unknown,Series.dt.dayofweek is deprecated and will be removed in a future version. Use Series.dt.day_of_week instead.
+2021,iterative_0_uniform__unknown,Series.dt.dayofweek is deprecated and will be removed in a future version. Use Series.dt.day_of_week instead.
+2022,median_0_uniform__unknown,Series.dt.dayofweek is deprecated and will be removed in a future version. Use Series.dt.day_of_week instead.
+2022,median_0_uniform__mode,Series.dt.dayofweek is deprecated and will be removed in a future version. Use Series.dt.day_of_week instead.
+2022,knn_5_uniform__unknown,Series.dt.dayofweek is deprecated and will be removed in a future version. Use Series.dt.day_of_week instead.
+2022,knn_10_uniform__unknown,Series.dt.dayofweek is deprecated and will be removed in a future version. Use Series.dt.day_of_week instead.
+2022,iterative_0_uniform__unknown,Series.dt.dayofweek is deprecated and will be removed in a future version. Use Series.dt.day_of_week instead.
+2023,median_0_uniform__unknown,Series.dt.dayofweek is deprecated and will be removed in a future version. Use Series.dt.day_of_week instead.
+2023,median_0_uniform__mode,Series.dt.dayofweek is deprecated and will be removed in a future version. Use Series.dt.day_of_week instead.
+2023,knn_5_uniform__unknown,Series.dt.dayofweek is deprecated and will be removed in a future version. Use Series.dt.day_of_week instead.
+2023,knn_10_uniform__unknown,Series.dt.dayofweek is deprecated and will be removed in a future version. Use Series.dt.day_of_week instead.
+2023,iterative_0_uniform__unknown,Series.dt.dayofweek is deprecated and will be removed in a future version. Use Series.dt.day_of_week instead.
