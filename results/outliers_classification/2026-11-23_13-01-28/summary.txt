@@ -1,0 +1,40 @@
+OUTLIER TREATMENT (classification)
+=================================================================
+
+Settings:
+{'isolation_forest': {'n_estimators': 300, 'contamination': 0.02},
+ 'treatments': ['none', 'drop_train', 'score'],
+ 'models': {'classification': ['logistic_regression',
+                               'random_forest',
+                               'hist_gradient_boosting'],
+            'regression': ['ridge', 'random_forest', 'hist_gradient_boosting']}}
+
+Validation: sliding_window, folds [2020, 2021, 2022, 2023]
+Primary metric: f1
+
+MEAN METRICS (over folds and models)
+-----------------------------------------------------------------
+                f1  precision  recall  pr_auc  roc_auc
+treatment                                             
+none        0.7034     0.7466  0.6803  0.8287   0.7714
+drop_train  0.7037     0.7463  0.6790  0.8280   0.7713
+score       0.7075     0.7469  0.6868  0.8291   0.7712
+
+DIFFERENCE TO 'none' (negative is better for: ['mae', 'mse', 'rmse'])
+-----------------------------------------------------------------
+            delta_f1  delta_precision  delta_recall  delta_pr_auc  delta_roc_auc  f1_delta_std
+treatment                                                                                     
+none          0.0000           0.0000        0.0000        0.0000         0.0000        0.0000
+drop_train    0.0002          -0.0003       -0.0013       -0.0007        -0.0001        0.0073
+score         0.0040           0.0003        0.0065        0.0003        -0.0002        0.0122
+
+F1 BY MODEL (higher is better)
+-----------------------------------------------------------------
+treatment                 none  drop_train   score
+model                                             
+hist_gradient_boosting  0.6884      0.6929  0.6901
+logistic_regression     0.6925      0.6899  0.7008
+random_forest           0.7294      0.7283  0.7315
+
+READING GUIDE
+A version only matters if its difference to 'none' is larger than the spread across folds (f1_delta_std).
