@@ -33,7 +33,7 @@ columns:
 # ============================================================
 
 validation:
-  strategy: sliding_window
+  strategy: expanding_window
   target_horizon_days: 90
   cv_years: [2020, 2021, 2022, 2023]
 
@@ -56,6 +56,17 @@ random_state: 42
 
 preprocessing:
 
+  feature_engineering:
+    enabled: true
+    features:
+      - recency_ratio
+      - purchases_per_year
+      - value_vs_usual
+      - recent_count_share
+      - discount_pct
+      - value_per_line
+      - value_cv
+    
   drop_rows_without_purchase_date: true
 
   # ----------------------------------------------------------
@@ -254,11 +265,55 @@ preprocessing:
   # ----------------------------------------------------------
 
   feature_selection:
-    include_imputation_indicators: false
+    enabled: true
+    include_imputation_indicators:    false
     drop_columns:
       - ID
       - customer_id
       - random_noise
+
+    consensus:
+      enabled: true
+      rejection_threshold: 2
+      apply_threshold: 2
+      evaluation_thresholds: [4, 3, 2]
+      evaluation_models:
+        - random_forest
+        - xgboost
+        - catboost
+        - logistic_regression
+        - lightgbm
+
+    methods:
+      mrmr:
+        enabled: true
+        n_features: 30
+
+      rfecv:
+        enabled: true
+        step: 0.15
+        min_features_to_select: 10
+        inner_splits: 3
+        min_train_rows: 500
+        min_validation_rows: 100
+        n_estimators: 150
+        min_samples_leaf: 5
+        scoring: f1
+        score_tolerance: 0.005
+        selection_rule: conservative
+
+      boruta:
+        enabled: true
+        max_iter: 100
+        n_estimators: auto
+        max_depth: 5
+        perc: 100
+
+      logistic_l1:
+        enabled: true
+        C: 0.1
+        max_iter: 5000
+        tolerance: 0.000001
 
   # ----------------------------------------------------------
   # Outlier detection (Isolation Forest, fitted on the train fold only)

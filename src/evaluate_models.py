@@ -25,6 +25,10 @@ from src.fold_preprocessing import prepare_numeric_fold
 from src.models import build_models, with_target_transform
 from src.preprocessing import prepare_rows
 from src.validation import temporal_cv
+from src.feature_selection import (
+    run_feature_selection,
+    apply_consensus_selection,
+)
 
 # Classification metrics
 METRICS = {
@@ -334,7 +338,7 @@ def run_evaluation(task=None):
         transformer, columns = fit_feature_transformer(
             prepared_train,
             config,
-            task="classification",
+            task=config["modeling"]["task"],
         )
 
         X_train = apply_feature_transformer(
@@ -350,6 +354,50 @@ def run_evaluation(task=None):
             columns,
             config,
         )
+
+        settings = config["preprocessing"]["feature_engineering"]
+
+        if settings["enabled"]:
+            engineered = settings["features"]
+
+            found = [
+                feature
+                for feature in engineered
+                if any(col.endswith(f"__{feature}") for col in X_train.columns)
+            ]
+
+            print(f"Feature Engineering: {len(found)}/{len(engineered)} features")
+            print("Features encontradas:", found)
+
+            assert len(found) == len(engineered)
+
+        fs_settings = config["preprocessing"]["feature_selection"]
+
+        if fs_settings.get("enabled", False):
+            selection = run_feature_selection(
+                X_train,
+                y_train,
+                train_fold[
+                    config["preprocessing"]["date_features"]["source_column"]
+                ],
+                config,
+                raw_train_fold=train_fold,
+            )
+
+            original_features = X_train.shape[1]
+
+            X_train, X_val = apply_consensus_selection(
+                X_train,
+                X_val,
+                selection,
+                config,
+            )
+
+            print(
+                f"Feature Selection: "
+                f"{original_features} -> {X_train.shape[1]} features "
+                f"({original_features - X_train.shape[1]} removed)"
+            )
 
         print(f"\n=== FOLD {year} ===")
         print(
