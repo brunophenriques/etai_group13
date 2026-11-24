@@ -1,4 +1,4 @@
-"""Isolation Forest: does treating outliers help? Compares versions in the temporal CV
+"""Isolation Forest: does treating outliers help? Compares versions in the temporal CV.
 
     python -m src.outliers                      # task from modeling.task
     python -m src.outliers --task regression    # or classification
@@ -40,7 +40,7 @@ from src.validation import temporal_cv
 
 CALENDAR_COLUMNS = ("purchase_year", "purchase_month", "purchase_day_of_week")
 
-# Suffixes of the indicator columns created during imputation
+# Suffixes of the indicator columns created during imputation.
 IMPUTATION_INDICATOR_SUFFIXES = (
     "_was_missing", "_no_training_donors", "_insufficient_history",
     "_was_corrected", "_was_recovered",
@@ -48,7 +48,7 @@ IMPUTATION_INDICATOR_SUFFIXES = (
 
 
 def numeric_columns(features):
-    """Continuous columns only: no calendar, imputation indicators or 0/1 flags"""
+    """Continuous columns only: no calendar, imputation indicators or 0/1 flags."""
     columns = features.select_dtypes("number").columns
     return [
         c for c in columns
@@ -134,7 +134,7 @@ def run(task=None):
         prep_train, prep_val, _ = prepare_numeric_fold(train, val, config)
 
         if task == "regression":
-            # Only customers who returned and have a known spend
+            # Only customers who returned and have a known spend.
             train_mask = ((train[classification_target] == 1) & train[target].notna()).to_numpy()
             val_mask = ((val[classification_target] == 1) & val[target].notna()).to_numpy()
             prep_train, prep_val = prep_train[train_mask], prep_val[val_mask]
@@ -142,11 +142,11 @@ def run(task=None):
         else:
             y_train, y_val = train[target], val[target]
 
-        transformer, columns = fit_feature_transformer(prep_train, config)
+        transformer, columns = fit_feature_transformer(prep_train, config, task=task)
         X_train = apply_feature_transformer(prep_train, transformer, columns, config)
         X_val = apply_feature_transformer(prep_val, transformer, columns, config)
 
-        # The forest learns from the training fold only
+        # The forest learns from the training fold only.
         forest = IsolationForest(
             n_estimators=forest_settings["n_estimators"],
             contamination=forest_settings["contamination"],
@@ -199,7 +199,7 @@ def run(task=None):
 
     results = pd.DataFrame(rows)
 
-    # Difference to the "none" version, same fold and model
+    # Difference to the "none" version, same fold and model.
     reference = results[results["treatment"] == "none"].set_index(["fold", "model"])
     index = pd.MultiIndex.from_frame(results[["fold", "model"]])
     for metric in metric_names:
@@ -229,7 +229,7 @@ def run(task=None):
     for title, table in sections:
         print(f"\n{title}\n{table.to_string()}")
 
-    # Save in a timestamped folder, with the settings that produced the results
+    # Save in a timestamped folder, with the settings that produced the results.
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     output = PROJECT_ROOT / config["paths"]["results"] / f"outliers_{task}" / timestamp
     output.mkdir(parents=True, exist_ok=False)

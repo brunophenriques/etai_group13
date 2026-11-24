@@ -1,0 +1,291 @@
+paths:
+  train: Project_data/train.csv
+  test: Project_data/test.csv
+  customers: Project_data/clientes.csv
+  processed: data/processed/
+  models: models/
+  results: results/
+columns:
+  customer_id: customer_id
+  classification_target: repeat_purchase_90d
+  regression_target: spend_next_90d
+validation:
+  strategy: sliding_window
+  target_horizon_days: 90
+  cv_years:
+  - 2020
+  - 2021
+  - 2022
+  - 2023
+  holdout_year: 2024
+  sliding_window:
+    train_years: 3
+random_state: 42
+preprocessing:
+  drop_rows_without_purchase_date: true
+  feature_selection:
+    drop_columns:
+    - ID
+    - customer_id
+    - random_noise
+  date_features:
+    source_column: purchase_date
+    extract:
+    - year
+    - month
+    - day_of_week
+    drop_original_from_model: true
+  historical_gaps:
+    negative_values_strategy: treat_as_missing
+    add_correction_indicator: true
+    insufficient_history_value: 0
+    add_missing_indicator: true
+    unexpected_missing_strategy: median
+    mean_gap:
+      minimum_prior_purchases: 2
+    std_gap:
+      minimum_prior_purchases: 3
+      insufficient_history_value: 0
+  historical_purchase_values:
+    mean:
+      minimum_prior_purchases: 1
+      insufficient_history_value: 0
+      unexpected_missing_strategy: formula
+      correct_inconsistent_values: false
+      consistency_tolerance: 0.01
+      add_missing_indicator: true
+      add_correction_indicator: true
+    std:
+      minimum_prior_purchases: 2
+      insufficient_history_value: 0
+    min_max:
+      minimum_prior_purchases: 1
+      insufficient_history_value: 0
+    max_consistency:
+      check_against_total_spend: true
+      inconsistent_strategy: median
+      add_correction_indicator: true
+  recency:
+    insufficient_history_value: 0
+    recover_from_previous_date: true
+    fallback_strategy: median
+    add_missing_indicator: true
+    add_recovery_indicator: true
+  spend_365d:
+    zero_when_no_purchases: true
+    unexpected_missing_strategy: median
+    add_missing_indicator: true
+    sentinel_value: 1000000000
+    sentinel_strategy: treat_as_missing
+    negative_values_strategy: treat_as_missing
+    add_correction_indicator: true
+  numeric_imputation:
+    strategy: knn
+    columns:
+    - prior_mean_gap_days
+    - days_since_previous_purchase
+    - spend_365d
+    - prior_max_purchase_value
+    fit_on: train_fold_only
+    knn:
+      n_neighbors: 5
+      weights: distance
+      reference_columns:
+      - prior_purchase_count
+      - customer_tenure_days
+      - purchase_count_90d
+      - spend_90d
+  categorical_missing:
+    fallback_value: Unknown
+    add_missing_indicator: true
+    recover_from_customer_history:
+    - payment_type
+    - warehouse
+    - salesperson
+    keep_unknown:
+    - transport_method
+  encoding:
+    strategy: one_hot
+    drop_first: false
+    handle_unknown: ignore
+    categorical_columns:
+    - payment_type
+    - warehouse
+    - salesperson
+    - commercial_zone
+    - document_series
+    - purchase_month
+    - purchase_day_of_week
+    rare_categories:
+      enabled: true
+      columns:
+      - transport_method
+      min_frequency: 20
+      handle_unknown: infrequent_if_exist
+  scaling:
+    enabled: true
+    candidates:
+    - standard
+    - robust
+    - passthrough
+    default: robust
+    apply_to: numeric_features
+    fit_on: train_fold_only
+  customer_metadata:
+    enabled: false
+modeling:
+  task: classification
+  models:
+    dummy:
+      enabled: true
+      parameters:
+        strategy: prior
+    logistic_regression:
+      enabled: true
+      parameters:
+        solver: liblinear
+        max_iter: 5000
+        C: 1.0
+    decision_tree:
+      enabled: true
+      parameters:
+        min_samples_leaf: 20
+    random_forest:
+      enabled: true
+      parameters:
+        n_estimators: 200
+        min_samples_leaf: 5
+        n_jobs: -1
+    gradient_boosting:
+      enabled: true
+      parameters:
+        n_estimators: 100
+        learning_rate: 0.1
+        max_depth: 3
+    hist_gradient_boosting:
+      enabled: true
+      parameters:
+        max_iter: 100
+        learning_rate: 0.1
+        max_leaf_nodes: 15
+    adaboost:
+      enabled: true
+      parameters:
+        n_estimators: 200
+        learning_rate: 0.05
+        random_state: 42
+    xgboost:
+      enabled: true
+      parameters:
+        n_estimators: 300
+        max_depth: 4
+        learning_rate: 0.05
+        subsample: 0.8
+        colsample_bytree: 0.8
+        objective: binary:logistic
+        eval_metric: logloss
+        tree_method: hist
+        random_state: 42
+        n_jobs: -1
+    lightgbm:
+      enabled: true
+      parameters:
+        n_estimators: 300
+        learning_rate: 0.05
+        num_leaves: 15
+        max_depth: 5
+        min_child_samples: 30
+        verbosity: -1
+        random_state: 42
+        n_jobs: -1
+    catboost:
+      enabled: true
+      parameters:
+        iterations: 300
+        depth: 5
+        learning_rate: 0.05
+        loss_function: Logloss
+        random_seed: 42
+        verbose: false
+        allow_writing_files: false
+  evaluation:
+    primary_metric: f1
+    metrics:
+    - f1
+    - precision
+    - recall
+    - pr_auc
+    - roc_auc
+    classification_threshold: 0.5
+  output:
+    save_csv: true
+    save_txt: true
+hyperparameter_tuning:
+  threshold_optimization:
+    enabled: true
+    metric: f1
+    min_threshold: 0.2
+    max_threshold: 0.8
+    step: 0.025
+  enabled: true
+  method: optuna
+  model: catboost
+  scoring: f1
+  random_state: 42
+  nested_cv:
+    enabled: true
+    outer:
+      strategy: sliding_window
+      use_validation_config: true
+    inner:
+      strategy: sliding_window
+      max_splits: 3
+      validation_window_days: 180
+      step_days: 180
+      target_horizon_days: 90
+      min_train_rows: 500
+      min_validation_rows: 100
+  randomized:
+    n_iter: 30
+    n_jobs: -1
+    verbose: 1
+  grid:
+    n_jobs: -1
+    verbose: 1
+  optuna:
+    n_trials: 15
+    sampler: tpe
+    n_jobs: 1
+  search_space: null
+  output:
+    save_csv: true
+    save_txt: true
+    save_all_trials: true
+    save_best_parameters: true
+    save_outer_fold_results: true
+imputation_experiment:
+  neighbors:
+  - 3
+  - 5
+  - 10
+  weights:
+  - uniform
+  - distance
+  categorical_strategies:
+  - unknown
+  - mode
+  - history
+  mask_seeds:
+  - 42
+  - 43
+  - 44
+  mask_fraction: 0.1
+  f1_tolerance: 0.005
+  mae_relative_tolerance: 0.01
+  regression_models:
+    ridge:
+      alpha: 1.0
+    random_forest:
+      n_estimators: 200
+      min_samples_leaf: 5
+      n_jobs: -1

@@ -34,6 +34,7 @@ from src.models import build_models
 
 
 PREPROCESSING_FILES = [
+    "src/imputation.py",
     "src/preprocessing.py",
     "src/fold_preprocessing.py",
     "src/feature_transformer.py",
@@ -68,7 +69,7 @@ def prepare_matrices(train, val, config):
     )
 
     transformer, columns = fit_feature_transformer(
-        prepared_train, config
+        prepared_train, config, task="classification"
     )
 
     x_train = apply_feature_transformer(

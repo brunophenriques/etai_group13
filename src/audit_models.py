@@ -40,14 +40,15 @@ def run_audit():
 
     train, _, _ = load_data(config)
     train = prepare_rows(train, config)
+    validation = config["validation"]
 
     year, train_fold, val_fold = next(
         temporal_cv(
             train,
-            config["validation"]["cv_years"],
-            horizon_days=config["validation"][
-                "target_horizon_days"
-            ],
+            validation["cv_years"],
+            horizon_days=validation["target_horizon_days"],
+            strategy=validation["strategy"],
+            train_years=validation.get("sliding_window", {}).get("train_years"),
         )
     )
 
@@ -72,6 +73,7 @@ def run_audit():
     transformer, _ = fit_feature_transformer(
         prepared_train,
         config,
+        task="classification",
     )
 
     print(

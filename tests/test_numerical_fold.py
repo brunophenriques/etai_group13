@@ -54,7 +54,7 @@ for column in columns:
         f"{column}: "
         f"train NaN={train_missing}, "
         f"validation NaN={val_missing}, "
-        f"median={imputers[column].statistics_[0]:.4f}"
+        f"strategy={imputers['__preprocessor__'].strategy_}"
     )
 
     assert train_missing == 0

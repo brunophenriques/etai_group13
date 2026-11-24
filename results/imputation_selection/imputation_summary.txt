@@ -1,0 +1,549 @@
+ETAI GROUP 13
+
+IMPUTATION COMPARISON
+
+===========================================================================
+
+EXPERIMENT INFORMATION
+
+2026-11-19T18:51:48
+
+{'missing_date_rows_excluded': 65,
+ 'development_rows': 5634,
+ 'unknown_returner_spend_development': 119,
+ 'train_sha256': '93963c048b6be0da2b932714e938961c087db6aa6144903fbb3042bbdb37e5b5',
+ 'versions': {'numpy': '2.5.5', 'pandas': '3.1.1', 'scikit-learn': '1.9.1'},
+ 'note': 'Selection scores, not unbiased final performance. Holdout/test '
+         'excluded. Prior EDA saw full train.'}
+
+CANDIDATES
+
+  numeric  k weights categorical                               label                    candidate
+   median  0 uniform     unknown                    Median + Unknown    median_0_uniform__unknown
+   median  0 uniform        mode                       Median + mode       median_0_uniform__mode
+      knn  5 uniform     unknown                 KNN (k=5) + Unknown       knn_5_uniform__unknown
+      knn 10 uniform     unknown                KNN (k=10) + Unknown      knn_10_uniform__unknown
+iterative  0 uniform     unknown Iterative (BayesianRidge) + Unknown iterative_0_uniform__unknown
+
+ITERATIVE METHOD
+
+IterativeImputer(estimator=BayesianRidge(), max_iter=10, sample_posterior=False, random_state=42). Single imputation; not random forest or multiple imputation.
+
+MODEL PARAMETERS
+
+{'classification': {'logistic_regression': {'C': 1.0,
+                                            'class_weight': None,
+                                            'dual': False,
+                                            'fit_intercept': True,
+                                            'intercept_scaling': 1,
+                                            'l1_ratio': 0.0,
+                                            'max_iter': 5000,
+                                            'n_jobs': None,
+                                            'penalty': 'deprecated',
+                                            'random_state': 42,
+                                            'solver': 'liblinear',
+                                            'tol': 0.0001,
+                                            'verbose': 0,
+                                            'warm_start': False},
+                    'random_forest': {'bootstrap': True,
+                                      'ccp_alpha': 0.0,
+                                      'class_weight': None,
+                                      'criterion': 'gini',
+                                      'max_depth': None,
+                                      'max_features': 'sqrt',
+                                      'max_leaf_nodes': None,
+                                      'max_samples': None,
+                                      'min_impurity_decrease': 0.0,
+                                      'min_samples_leaf': 5,
+                                      'min_samples_split': 2,
+                                      'min_weight_fraction_leaf': 0.0,
+                                      'monotonic_cst': None,
+                                      'n_estimators': 200,
+                                      'n_jobs': -1,
+                                      'oob_score': False,
+                                      'random_state': 42,
+                                      'verbose': 0,
+                                      'warm_start': False}},
+ 'regression': {'ridge': {'alpha': 1.0,
+                          'copy_X': True,
+                          'fit_intercept': True,
+                          'max_iter': None,
+                          'positive': False,
+                          'random_state': None,
+                          'solver': 'auto',
+                          'tol': 0.0001},
+                'random_forest': {'bootstrap': True,
+                                  'ccp_alpha': 0.0,
+                                  'criterion': 'squared_error',
+                                  'max_depth': None,
+                                  'max_features': 1.0,
+                                  'max_leaf_nodes': None,
+                                  'max_samples': None,
+                                  'min_impurity_decrease': 0.0,
+                                  'min_samples_leaf': 5,
+                                  'min_samples_split': 2,
+                                  'min_weight_fraction_leaf': 0.0,
+                                  'monotonic_cst': None,
+                                  'n_estimators': 200,
+                                  'n_jobs': -1,
+                                  'oob_score': False,
+                                  'random_state': 42,
+                                  'verbose': 0,
+                                  'warm_start': False}}}
+
+SELECTION CRITERIA
+
+{'f1_tolerance': 0.005,
+ 'mae_relative_tolerance': 0.01,
+ 'regression_models': {'ridge': {'alpha': 1.0},
+                       'random_forest': {'n_estimators': 200,
+                                         'min_samples_leaf': 5,
+                                         'n_jobs': -1}}}
+
+CROSS-VALIDATION SUMMARY
+
+                   candidate        mean       std   numeric  k weights categorical                               label  eligible  numeric_rank  categorical_rank  weight_rank           task metric
+iterative_0_uniform__unknown    0.717033  0.026122 iterative  0 uniform     unknown Iterative (BayesianRidge) + Unknown      True             2                 0            0 classification     f1
+     knn_10_uniform__unknown    0.718827  0.026437       knn 10 uniform     unknown                KNN (k=10) + Unknown      True             1                 0            0 classification     f1
+      knn_5_uniform__unknown    0.715112  0.031777       knn  5 uniform     unknown                 KNN (k=5) + Unknown      True             1                 0            0 classification     f1
+      median_0_uniform__mode    0.718601  0.024470    median  0 uniform        mode                       Median + mode      True             0                 1            0 classification     f1
+   median_0_uniform__unknown    0.715440  0.027872    median  0 uniform     unknown                    Median + Unknown      True             0                 0            0 classification     f1
+iterative_0_uniform__unknown 1440.017401 79.958806 iterative  0 uniform     unknown Iterative (BayesianRidge) + Unknown      True             2                 0            0     regression    mae
+     knn_10_uniform__unknown 1437.891648 74.452442       knn 10 uniform     unknown                KNN (k=10) + Unknown      True             1                 0            0     regression    mae
+      knn_5_uniform__unknown 1440.312388 72.807302       knn  5 uniform     unknown                 KNN (k=5) + Unknown      True             1                 0            0     regression    mae
+      median_0_uniform__mode 1438.170465 73.720319    median  0 uniform        mode                       Median + mode      True             0                 1            0     regression    mae
+   median_0_uniform__unknown 1438.552329 75.071717    median  0 uniform     unknown                    Median + Unknown      True             0                 0            0     regression    mae
+
+DETAILED RESULTS BY FOLD
+
+                   candidate           task  fold               model  preprocessing_seconds  model_seconds empty_training_columns       f1   pr_auc  roc_auc         mae        rmse        r2
+   median_0_uniform__unknown classification  2020 logistic_regression               0.181223       0.024992                        0.670606 0.827858 0.743174         NaN         NaN       NaN
+   median_0_uniform__unknown classification  2020       random_forest               0.181223       0.312206                        0.730077 0.827675 0.743488         NaN         NaN       NaN
+   median_0_uniform__unknown     regression  2020               ridge               0.181223       0.007100                             NaN      NaN      NaN 1492.256079 2117.194653 -0.096509
+   median_0_uniform__unknown     regression  2020       random_forest               0.181223       0.294051                             NaN      NaN      NaN 1432.855187 2034.421124 -0.012447
+      median_0_uniform__mode classification  2020 logistic_regression               0.143129       0.024796                        0.674487 0.828550 0.743072         NaN         NaN       NaN
+      median_0_uniform__mode classification  2020       random_forest               0.143129       0.304098                        0.726573 0.828934 0.743922         NaN         NaN       NaN
+      median_0_uniform__mode     regression  2020               ridge               0.143129       0.006665                             NaN      NaN      NaN 1492.595997 2117.253894 -0.096571
+      median_0_uniform__mode     regression  2020       random_forest               0.143129       0.295795                             NaN      NaN      NaN 1432.309414 2030.593431 -0.008641
+      knn_5_uniform__unknown classification  2020 logistic_regression               0.227932       0.019910                        0.656761 0.825561 0.742111         NaN         NaN       NaN
+      knn_5_uniform__unknown classification  2020       random_forest               0.227932       0.306543                        0.728443 0.831666 0.745234         NaN         NaN       NaN
+      knn_5_uniform__unknown     regression  2020               ridge               0.227932       0.006933                             NaN      NaN      NaN 1488.168335 2109.103921 -0.088145
+      knn_5_uniform__unknown     regression  2020       random_forest               0.227932       0.295800                             NaN      NaN      NaN 1427.784835 2023.100745 -0.001211
+     knn_10_uniform__unknown classification  2020 logistic_regression               0.244309       0.025371                        0.674591 0.827792 0.743100         NaN         NaN       NaN
+     knn_10_uniform__unknown classification  2020       random_forest               0.244309       0.310722                        0.729140 0.830312 0.744725         NaN         NaN       NaN
+     knn_10_uniform__unknown     regression  2020               ridge               0.244309       0.006844                             NaN      NaN      NaN 1487.474529 2108.553703 -0.087577
+     knn_10_uniform__unknown     regression  2020       random_forest               0.244309       0.288665                             NaN      NaN      NaN 1434.697086 2046.202904 -0.024208
+iterative_0_uniform__unknown classification  2020 logistic_regression               0.188705       0.025050                        0.673591 0.827652 0.742813         NaN         NaN       NaN
+iterative_0_uniform__unknown classification  2020       random_forest               0.188705       0.318424                        0.734015 0.829653 0.743922         NaN         NaN       NaN
+iterative_0_uniform__unknown     regression  2020               ridge               0.188705       0.006879                             NaN      NaN      NaN 1490.939187 2111.825551 -0.090955
+iterative_0_uniform__unknown     regression  2020       random_forest               0.188705       0.290255                             NaN      NaN      NaN 1439.502992 2048.413877 -0.026423
+   median_0_uniform__unknown classification  2021 logistic_regression               0.143259       0.023083                        0.736579 0.857009 0.813051         NaN         NaN       NaN
+   median_0_uniform__unknown classification  2021       random_forest               0.143259       0.307586                        0.753309 0.851561 0.804632         NaN         NaN       NaN
+   median_0_uniform__unknown     regression  2021               ridge               0.143259       0.006773                             NaN      NaN      NaN 1439.340925 2274.400011  0.443173
+   median_0_uniform__unknown     regression  2021       random_forest               0.143259       0.277191                             NaN      NaN      NaN 1345.985153 2276.320459  0.442232
+      median_0_uniform__mode classification  2021 logistic_regression               0.146801       0.024778                        0.740926 0.859883 0.815970         NaN         NaN       NaN
+      median_0_uniform__mode classification  2021       random_forest               0.146801       0.312572                        0.742718 0.848572 0.798755         NaN         NaN       NaN
+      median_0_uniform__mode     regression  2021               ridge               0.146801       0.006608                             NaN      NaN      NaN 1439.521452 2274.892344  0.442932
+      median_0_uniform__mode     regression  2021       random_forest               0.146801       0.280913                             NaN      NaN      NaN 1346.023902 2282.431723  0.439234
+      knn_5_uniform__unknown classification  2021 logistic_regression               0.224622       0.023136                        0.734082 0.856587 0.812556         NaN         NaN       NaN
+      knn_5_uniform__unknown classification  2021       random_forest               0.224622       0.303124                        0.752741 0.849316 0.804902         NaN         NaN       NaN
+      knn_5_uniform__unknown     regression  2021               ridge               0.224622       0.007293                             NaN      NaN      NaN 1433.166104 2266.976913  0.446802
+      knn_5_uniform__unknown     regression  2021       random_forest               0.224622       0.300247                             NaN      NaN      NaN 1361.058579 2306.384218  0.427402
+     knn_10_uniform__unknown classification  2021 logistic_regression               0.217995       0.022569                        0.738155 0.856835 0.812813         NaN         NaN       NaN
+     knn_10_uniform__unknown classification  2021       random_forest               0.217995       0.306354                        0.753341 0.852004 0.806216         NaN         NaN       NaN
+     knn_10_uniform__unknown     regression  2021               ridge               0.217995       0.006711                             NaN      NaN      NaN 1433.767416 2266.512546  0.447029
+     knn_10_uniform__unknown     regression  2021       random_forest               0.217995       0.284426                             NaN      NaN      NaN 1342.108100 2264.955309  0.447788
+iterative_0_uniform__unknown classification  2021 logistic_regression               0.201544       0.022398                        0.734082 0.856606 0.812523         NaN         NaN       NaN
+iterative_0_uniform__unknown classification  2021       random_forest               0.201544       0.308096                        0.740651 0.849906 0.803060         NaN         NaN       NaN
+iterative_0_uniform__unknown     regression  2021               ridge               0.201544       0.006813                             NaN      NaN      NaN 1430.520328 2263.052554  0.448716
+iterative_0_uniform__unknown     regression  2021       random_forest               0.201544       0.282309                             NaN      NaN      NaN 1333.892017 2228.796398  0.465279
+   median_0_uniform__unknown classification  2022 logistic_regression               0.145062       0.028800                        0.690808 0.801312 0.778928         NaN         NaN       NaN
+   median_0_uniform__unknown classification  2022       random_forest               0.145062       0.315743                        0.722561 0.810924 0.793371         NaN         NaN       NaN
+   median_0_uniform__unknown     regression  2022               ridge               0.145062       0.007104                             NaN      NaN      NaN 1493.103447 2206.199273  0.036593
+   median_0_uniform__unknown     regression  2022       random_forest               0.145062       0.294402                             NaN      NaN      NaN 1306.017328 1831.282785  0.336209
+      median_0_uniform__mode classification  2022 logistic_regression               0.141413       0.030090                        0.699164 0.802885 0.780390         NaN         NaN       NaN
+      median_0_uniform__mode classification  2022       random_forest               0.141413       0.299936                        0.721109 0.814459 0.793635         NaN         NaN       NaN
+      median_0_uniform__mode     regression  2022               ridge               0.141413       0.007241                             NaN      NaN      NaN 1489.570460 2203.628041  0.038837
+      median_0_uniform__mode     regression  2022       random_forest               0.141413       0.294885                             NaN      NaN      NaN 1308.941967 1833.385637  0.334684
+      knn_5_uniform__unknown classification  2022 logistic_regression               0.212278       0.029429                        0.694678 0.801490 0.779040         NaN         NaN       NaN
+      knn_5_uniform__unknown classification  2022       random_forest               0.212278       0.320089                        0.723664 0.809139 0.794545         NaN         NaN       NaN
+      knn_5_uniform__unknown     regression  2022               ridge               0.212278       0.007206                             NaN      NaN      NaN 1497.439292 2210.411434  0.032910
+      knn_5_uniform__unknown     regression  2022       random_forest               0.212278       0.294772                             NaN      NaN      NaN 1309.296712 1840.059916  0.329831
+     knn_10_uniform__unknown classification  2022 logistic_regression               0.207006       0.030041                        0.695410 0.799848 0.775982         NaN         NaN       NaN
+     knn_10_uniform__unknown classification  2022       random_forest               0.207006       0.301581                        0.729231 0.810272 0.794732         NaN         NaN       NaN
+     knn_10_uniform__unknown     regression  2022               ridge               0.207006       0.007522                             NaN      NaN      NaN 1496.641927 2210.249610  0.033052
+     knn_10_uniform__unknown     regression  2022       random_forest               0.207006       0.293526                             NaN      NaN      NaN 1310.551054 1844.150668  0.326848
+iterative_0_uniform__unknown classification  2022 logistic_regression               0.188757       0.030111                        0.699029 0.802708 0.778765         NaN         NaN       NaN
+iterative_0_uniform__unknown classification  2022       random_forest               0.188757       0.310431                        0.722561 0.809673 0.794001         NaN         NaN       NaN
+iterative_0_uniform__unknown     regression  2022               ridge               0.188757       0.007605                             NaN      NaN      NaN 1498.838290 2217.495371  0.026702
+iterative_0_uniform__unknown     regression  2022       random_forest               0.188757       0.292558                             NaN      NaN      NaN 1308.031640 1829.817462  0.337271
+   median_0_uniform__unknown classification  2023 logistic_regression               0.144618       0.028904                        0.692308 0.855585 0.788372         NaN         NaN       NaN
+   median_0_uniform__unknown classification  2023       random_forest               0.144618       0.315100                        0.727273 0.856311 0.788309         NaN         NaN       NaN
+   median_0_uniform__unknown     regression  2023               ridge               0.144618       0.007324                             NaN      NaN      NaN 1497.096897 2601.205278  0.403021
+   median_0_uniform__unknown     regression  2023       random_forest               0.144618       0.284808                             NaN      NaN      NaN 1501.763619 2897.133386  0.259463
+      median_0_uniform__mode classification  2023 logistic_regression               0.142254       0.026267                        0.703268 0.858124 0.791459         NaN         NaN       NaN
+      median_0_uniform__mode classification  2023       random_forest               0.142254       0.308668                        0.740566 0.852615 0.785585         NaN         NaN       NaN
+      median_0_uniform__mode     regression  2023               ridge               0.142254       0.007464                             NaN      NaN      NaN 1496.721113 2600.731410  0.403239
+      median_0_uniform__mode     regression  2023       random_forest               0.142254       0.296702                             NaN      NaN      NaN 1499.679415 2889.585389  0.263317
+      knn_5_uniform__unknown classification  2023 logistic_regression               0.229886       0.034663                        0.690571 0.854270 0.787044         NaN         NaN       NaN
+      knn_5_uniform__unknown classification  2023       random_forest               0.229886       0.312724                        0.739953 0.855873 0.787883         NaN         NaN       NaN
+      knn_5_uniform__unknown     regression  2023               ridge               0.229886       0.007464                             NaN      NaN      NaN 1496.054457 2599.473020  0.403816
+      knn_5_uniform__unknown     regression  2023       random_forest               0.229886       0.305526                             NaN      NaN      NaN 1509.530787 2915.039368  0.250281
+     knn_10_uniform__unknown classification  2023 logistic_regression               0.215420       0.029326                        0.698287 0.857025 0.789671         NaN         NaN       NaN
+     knn_10_uniform__unknown classification  2023       random_forest               0.215420       0.314807                        0.732461 0.855435 0.785983         NaN         NaN       NaN
+     knn_10_uniform__unknown     regression  2023               ridge               0.215420       0.007442                             NaN      NaN      NaN 1495.833940 2599.392914  0.403853
+     knn_10_uniform__unknown     regression  2023       random_forest               0.215420       0.326102                             NaN      NaN      NaN 1502.059136 2900.858915  0.257557
+iterative_0_uniform__unknown classification  2023 logistic_regression               0.198843       0.028781                        0.689747 0.855680 0.788246         NaN         NaN       NaN
+iterative_0_uniform__unknown classification  2023       random_forest               0.198843       0.315095                        0.742586 0.855113 0.786004         NaN         NaN       NaN
+iterative_0_uniform__unknown     regression  2023               ridge               0.198843       0.007586                             NaN      NaN      NaN 1495.919275 2599.811058  0.403661
+iterative_0_uniform__unknown     regression  2023       random_forest               0.198843       0.293045                             NaN      NaN      NaN 1522.495476 2925.656629  0.244810
+
+END-TO-END RESULTS
+
+ fold          classifier     regressor  known_truth_rows  excluded_unknown_spend  false_positives  false_negatives         mae        rmse        r2
+ 2020 logistic_regression         ridge               665                       5               52              171 1116.821161 1935.769242 -0.233405
+ 2020 logistic_regression random_forest               665                       5               52              171 1069.375586 1838.581673 -0.112665
+ 2020       random_forest         ridge               665                       5               96              114 1157.040991 1940.883455 -0.239931
+ 2020       random_forest random_forest               665                       5               96              114 1175.861830 1885.176041 -0.169775
+ 2021 logistic_regression         ridge               772                      10               77              134  879.639714 1754.867923  0.514805
+ 2021 logistic_regression random_forest               772                      10               77              134  888.782123 1791.312431  0.494443
+ 2021       random_forest         ridge               772                      10               89              116  910.006862 1789.136734  0.495670
+ 2021       random_forest random_forest               772                      10               89              116  925.316125 1815.269161  0.480830
+ 2022 logistic_regression         ridge               621                       7              168               54 1054.407114 1824.126342  0.001218
+ 2022 logistic_regression random_forest               621                       7              168               54  999.535704 1582.221414  0.248558
+ 2022       random_forest         ridge               621                       7              117               65 1014.507043 1819.044249  0.006775
+ 2022       random_forest random_forest               621                       7              117               65  971.242124 1580.800067  0.249907
+ 2023 logistic_regression         ridge               751                      16               47              185 1032.899537 2127.588793  0.415662
+ 2023 logistic_regression random_forest               751                      16               47              185 1061.207041 2346.477042  0.289242
+ 2023       random_forest         ridge               751                      16               86              142 1069.548784 2136.541708  0.410734
+ 2023       random_forest random_forest               751                      16               86              142 1119.519808 2345.723942  0.289699
+
+FINAL DECISION
+
+{'classification': {'numeric': 'median',
+                    'k': 0,
+                    'weights': 'uniform',
+                    'categorical': 'unknown',
+                    'label': 'Median + Unknown',
+                    'candidate': 'median_0_uniform__unknown'},
+ 'regression': {'numeric': 'median',
+                'k': 0,
+                'weights': 'uniform',
+                'categorical': 'unknown',
+                'label': 'Median + Unknown',
+                'candidate': 'median_0_uniform__unknown'}}
+
+CONFIGURATION USED (base; candidate overrides below)
+
+{'paths': {'train': 'Project_data/train.csv',
+           'test': 'Project_data/test.csv',
+           'customers': 'Project_data/clientes.csv',
+           'processed': 'data/processed/',
+           'models': 'models/',
+           'results': 'results/'},
+ 'columns': {'customer_id': 'customer_id',
+             'classification_target': 'repeat_purchase_90d',
+             'regression_target': 'spend_next_90d'},
+ 'validation': {'strategy': 'sliding_window',
+                'target_horizon_days': 90,
+                'cv_years': [2020, 2021, 2022, 2023],
+                'holdout_year': 2024,
+                'sliding_window': {'train_years': 3}},
+ 'random_state': 42,
+ 'preprocessing': {'drop_rows_without_purchase_date': True,
+                   'feature_selection': {'drop_columns': ['ID',
+                                                          'customer_id',
+                                                          'random_noise']},
+                   'date_features': {'source_column': 'purchase_date',
+                                     'extract': ['year',
+                                                 'month',
+                                                 'day_of_week'],
+                                     'drop_original_from_model': True},
+                   'historical_gaps': {'negative_values_strategy': 'treat_as_missing',
+                                       'add_correction_indicator': True,
+                                       'insufficient_history_value': 0,
+                                       'add_missing_indicator': True,
+                                       'unexpected_missing_strategy': 'median',
+                                       'mean_gap': {'minimum_prior_purchases': 2},
+                                       'std_gap': {'minimum_prior_purchases': 3,
+                                                   'insufficient_history_value': 0}},
+                   'historical_purchase_values': {'mean': {'minimum_prior_purchases': 1,
+                                                           'insufficient_history_value': 0,
+                                                           'unexpected_missing_strategy': 'formula',
+                                                           'correct_inconsistent_values': False,
+                                                           'consistency_tolerance': 0.01,
+                                                           'add_missing_indicator': True,
+                                                           'add_correction_indicator': True},
+                                                  'std': {'minimum_prior_purchases': 2,
+                                                          'insufficient_history_value': 0},
+                                                  'min_max': {'minimum_prior_purchases': 1,
+                                                              'insufficient_history_value': 0},
+                                                  'max_consistency': {'check_against_total_spend': True,
+                                                                      'inconsistent_strategy': 'median',
+                                                                      'add_correction_indicator': True}},
+                   'recency': {'insufficient_history_value': 0,
+                               'recover_from_previous_date': True,
+                               'fallback_strategy': 'median',
+                               'add_missing_indicator': True,
+                               'add_recovery_indicator': True},
+                   'spend_365d': {'zero_when_no_purchases': True,
+                                  'unexpected_missing_strategy': 'median',
+                                  'add_missing_indicator': True,
+                                  'sentinel_value': 1000000000,
+                                  'sentinel_strategy': 'treat_as_missing',
+                                  'negative_values_strategy': 'treat_as_missing',
+                                  'add_correction_indicator': True},
+                   'numeric_imputation': {'strategy': 'median',
+                                          'columns': ['prior_mean_gap_days',
+                                                      'days_since_previous_purchase',
+                                                      'spend_365d',
+                                                      'prior_max_purchase_value'],
+                                          'fit_on': 'train_fold_only',
+                                          'knn': {'n_neighbors': 5,
+                                                  'weights': 'distance',
+                                                  'reference_columns': ['prior_purchase_count',
+                                                                        'customer_tenure_days',
+                                                                        'purchase_count_90d',
+                                                                        'spend_90d']}},
+                   'categorical_missing': {'strategy': 'unknown',
+                                           'fallback_value': 'Unknown',
+                                           'add_missing_indicator': True,
+                                           'recover_from_customer_history': ['payment_type',
+                                                                             'warehouse',
+                                                                             'salesperson'],
+                                           'keep_unknown': ['transport_method']},
+                   'encoding': {'strategy': 'one_hot',
+                                'drop_first': False,
+                                'handle_unknown': 'ignore',
+                                'categorical_columns': ['payment_type',
+                                                        'warehouse',
+                                                        'salesperson',
+                                                        'commercial_zone',
+                                                        'document_series',
+                                                        'purchase_month',
+                                                        'purchase_day_of_week'],
+                                'rare_categories': {'enabled': True,
+                                                    'columns': ['transport_method'],
+                                                    'min_frequency': 20,
+                                                    'handle_unknown': 'infrequent_if_exist'}},
+                   'scaling': {'enabled': True,
+                               'candidates': ['standard',
+                                              'robust',
+                                              'passthrough'],
+                               'default': 'robust',
+                               'apply_to': 'numeric_features',
+                               'fit_on': 'train_fold_only'},
+                   'customer_metadata': {'enabled': False}},
+ 'modeling': {'task': 'classification',
+              'models': {'dummy': {'enabled': True,
+                                   'parameters': {'strategy': 'prior'}},
+                         'logistic_regression': {'enabled': True,
+                                                 'parameters': {'solver': 'liblinear',
+                                                                'max_iter': 5000,
+                                                                'C': 1.0}},
+                         'decision_tree': {'enabled': True,
+                                           'parameters': {'min_samples_leaf': 20}},
+                         'random_forest': {'enabled': True,
+                                           'parameters': {'n_estimators': 200,
+                                                          'min_samples_leaf': 5,
+                                                          'n_jobs': -1}},
+                         'gradient_boosting': {'enabled': True,
+                                               'parameters': {'n_estimators': 100,
+                                                              'learning_rate': 0.1,
+                                                              'max_depth': 3}},
+                         'hist_gradient_boosting': {'enabled': True,
+                                                    'parameters': {'max_iter': 100,
+                                                                   'learning_rate': 0.1,
+                                                                   'max_leaf_nodes': 15}},
+                         'adaboost': {'enabled': True,
+                                      'parameters': {'n_estimators': 200,
+                                                     'learning_rate': 0.05,
+                                                     'random_state': 42}},
+                         'xgboost': {'enabled': True,
+                                     'parameters': {'n_estimators': 300,
+                                                    'max_depth': 4,
+                                                    'learning_rate': 0.05,
+                                                    'subsample': 0.8,
+                                                    'colsample_bytree': 0.8,
+                                                    'objective': 'binary:logistic',
+                                                    'eval_metric': 'logloss',
+                                                    'tree_method': 'hist',
+                                                    'random_state': 42,
+                                                    'n_jobs': -1}},
+                         'lightgbm': {'enabled': True,
+                                      'parameters': {'n_estimators': 300,
+                                                     'learning_rate': 0.05,
+                                                     'num_leaves': 15,
+                                                     'max_depth': 5,
+                                                     'min_child_samples': 30,
+                                                     'verbosity': -1,
+                                                     'random_state': 42,
+                                                     'n_jobs': -1}},
+                         'catboost': {'enabled': True,
+                                      'parameters': {'iterations': 300,
+                                                     'depth': 5,
+                                                     'learning_rate': 0.05,
+                                                     'loss_function': 'Logloss',
+                                                     'random_seed': 42,
+                                                     'verbose': False,
+                                                     'allow_writing_files': False}}},
+              'evaluation': {'primary_metric': 'f1',
+                             'metrics': ['f1',
+                                         'precision',
+                                         'recall',
+                                         'pr_auc',
+                                         'roc_auc'],
+                             'classification_threshold': 0.5},
+              'output': {'save_csv': True, 'save_txt': True}},
+ 'hyperparameter_tuning': {'threshold_optimization': {'enabled': True,
+                                                      'metric': 'f1',
+                                                      'min_threshold': 0.2,
+                                                      'max_threshold': 0.8,
+                                                      'step': 0.025},
+                           'enabled': True,
+                           'method': 'optuna',
+                           'model': 'catboost',
+                           'scoring': 'f1',
+                           'random_state': 42,
+                           'nested_cv': {'enabled': True,
+                                         'outer': {'strategy': 'sliding_window',
+                                                   'use_validation_config': True},
+                                         'inner': {'strategy': 'sliding_window',
+                                                   'max_splits': 3,
+                                                   'validation_window_days': 180,
+                                                   'step_days': 180,
+                                                   'target_horizon_days': 90,
+                                                   'min_train_rows': 500,
+                                                   'min_validation_rows': 100}},
+                           'randomized': {'n_iter': 30,
+                                          'n_jobs': -1,
+                                          'verbose': 1},
+                           'grid': {'n_jobs': -1, 'verbose': 1},
+                           'optuna': {'n_trials': 15,
+                                      'sampler': 'tpe',
+                                      'n_jobs': 1},
+                           'search_space': None,
+                           'output': {'save_csv': True,
+                                      'save_txt': True,
+                                      'save_all_trials': True,
+                                      'save_best_parameters': True,
+                                      'save_outer_fold_results': True}}}
+
+CANDIDATE SETTINGS: Median + Unknown
+
+{'numeric_imputation': {'strategy': 'median',
+                        'columns': ['prior_mean_gap_days',
+                                    'days_since_previous_purchase',
+                                    'spend_365d',
+                                    'prior_max_purchase_value'],
+                        'fit_on': 'train_fold_only',
+                        'knn': {'n_neighbors': 5,
+                                'weights': 'uniform',
+                                'reference_columns': ['prior_purchase_count',
+                                                      'customer_tenure_days',
+                                                      'purchase_count_90d',
+                                                      'spend_90d']},
+                        'iterative': {'max_iter': 10}},
+ 'categorical_missing': {'strategy': 'unknown',
+                         'fallback_value': 'Unknown',
+                         'add_missing_indicator': True,
+                         'recover_from_customer_history': ['payment_type',
+                                                           'warehouse',
+                                                           'salesperson'],
+                         'keep_unknown': ['transport_method']}}
+
+CANDIDATE SETTINGS: Median + mode
+
+{'numeric_imputation': {'strategy': 'median',
+                        'columns': ['prior_mean_gap_days',
+                                    'days_since_previous_purchase',
+                                    'spend_365d',
+                                    'prior_max_purchase_value'],
+                        'fit_on': 'train_fold_only',
+                        'knn': {'n_neighbors': 5,
+                                'weights': 'uniform',
+                                'reference_columns': ['prior_purchase_count',
+                                                      'customer_tenure_days',
+                                                      'purchase_count_90d',
+                                                      'spend_90d']},
+                        'iterative': {'max_iter': 10}},
+ 'categorical_missing': {'strategy': 'mode',
+                         'fallback_value': 'Unknown',
+                         'add_missing_indicator': True,
+                         'recover_from_customer_history': ['payment_type',
+                                                           'warehouse',
+                                                           'salesperson'],
+                         'keep_unknown': ['transport_method']}}
+
+CANDIDATE SETTINGS: KNN (k=5) + Unknown
+
+{'numeric_imputation': {'strategy': 'knn',
+                        'columns': ['prior_mean_gap_days',
+                                    'days_since_previous_purchase',
+                                    'spend_365d',
+                                    'prior_max_purchase_value'],
+                        'fit_on': 'train_fold_only',
+                        'knn': {'n_neighbors': 5,
+                                'weights': 'uniform',
+                                'reference_columns': ['prior_purchase_count',
+                                                      'customer_tenure_days',
+                                                      'purchase_count_90d',
+                                                      'spend_90d']},
+                        'iterative': {'max_iter': 10}},
+ 'categorical_missing': {'strategy': 'unknown',
+                         'fallback_value': 'Unknown',
+                         'add_missing_indicator': True,
+                         'recover_from_customer_history': ['payment_type',
+                                                           'warehouse',
+                                                           'salesperson'],
+                         'keep_unknown': ['transport_method']}}
+
+CANDIDATE SETTINGS: KNN (k=10) + Unknown
+
+{'numeric_imputation': {'strategy': 'knn',
+                        'columns': ['prior_mean_gap_days',
+                                    'days_since_previous_purchase',
+                                    'spend_365d',
+                                    'prior_max_purchase_value'],
+                        'fit_on': 'train_fold_only',
+                        'knn': {'n_neighbors': 10,
+                                'weights': 'uniform',
+                                'reference_columns': ['prior_purchase_count',
+                                                      'customer_tenure_days',
+                                                      'purchase_count_90d',
+                                                      'spend_90d']},
+                        'iterative': {'max_iter': 10}},
+ 'categorical_missing': {'strategy': 'unknown',
+                         'fallback_value': 'Unknown',
+                         'add_missing_indicator': True,
+                         'recover_from_customer_history': ['payment_type',
+                                                           'warehouse',
+                                                           'salesperson'],
+                         'keep_unknown': ['transport_method']}}
+
+CANDIDATE SETTINGS: Iterative (BayesianRidge) + Unknown
+
+{'numeric_imputation': {'strategy': 'iterative',
+                        'columns': ['prior_mean_gap_days',
+                                    'days_since_previous_purchase',
+                                    'spend_365d',
+                                    'prior_max_purchase_value'],
+                        'fit_on': 'train_fold_only',
+                        'knn': {'n_neighbors': 5,
+                                'weights': 'uniform',
+                                'reference_columns': ['prior_purchase_count',
+                                                      'customer_tenure_days',
+                                                      'purchase_count_90d',
+                                                      'spend_90d']},
+                        'iterative': {'max_iter': 10}},
+ 'categorical_missing': {'strategy': 'unknown',
+                         'fallback_value': 'Unknown',
+                         'add_missing_indicator': True,
+                         'recover_from_customer_history': ['payment_type',
+                                                           'warehouse',
+                                                           'salesperson'],
+                         'keep_unknown': ['transport_method']}}
+
+NOTES
+
+Each imputer/scaler is fitted on its training fold only. The 2024 holdout and test do not participate in selection. These are selection scores, not independent final performance. All methods use the same recovery rules and indicators. Latest available earlier training transaction is assumed to be the true previous purchase.

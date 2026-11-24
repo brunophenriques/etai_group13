@@ -334,6 +334,7 @@ def run_evaluation(task=None):
         transformer, columns = fit_feature_transformer(
             prepared_train,
             config,
+            task="classification",
         )
 
         X_train = apply_feature_transformer(
@@ -506,6 +507,7 @@ def run_regression_evaluation(config):
         transformer, columns = fit_feature_transformer(
             prepared_train,
             config,
+            task="regression",
         )
 
         X_train = apply_feature_transformer(
