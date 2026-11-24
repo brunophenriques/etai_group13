@@ -284,6 +284,7 @@ preprocessing:
         - logistic_regression
         - lightgbm
 
+
     methods:
       mrmr:
         enabled: true
@@ -315,6 +316,19 @@ preprocessing:
         max_iter: 5000
         tolerance: 0.000001
 
+  feature_importance:
+    model: random_forest
+    n_repeats: 10
+    top_n: 20
+
+  monthly_drift:
+    predictions_file: null
+    min_monthly_rows: 20  
+    
+  threshold_diagnostics:
+    model: random_forest
+    thresholds: [0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7]
+    probability_bins: 10    
   # ----------------------------------------------------------
   # Outlier detection (Isolation Forest, fitted on the train fold only)
   # Experiment: python -m src.outliers [--task classification|regression]
