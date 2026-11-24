@@ -350,6 +350,35 @@ def run_evaluation(task=None):
             columns,
             config,
         )
+        engineered_features = config["preprocessing"]["feature_engineering"]
+
+        settings = config["preprocessing"]["feature_engineering"]
+
+        if settings["enabled"]:
+            engineered = settings["features"]
+
+            found = [
+                feature
+                for feature in engineered
+                if any(col.endswith(f"__{feature}") for col in X_train.columns)
+            ]
+
+            print(f"Feature Engineering: {len(found)}/{len(engineered)} features")
+            print("Features encontradas:", found)
+
+            assert len(found) == len(engineered)
+
+        if engineered_features["enabled"]:
+            for feature in engineered_features["features"]:
+                assert any(
+                    col.endswith(f"__{feature}")
+                    for col in X_train.columns
+                ), f"Feature não encontrada: {feature}"
+
+            print(
+                f"Feature Engineering ativo: "
+                f"{len(engineered_features['features'])} features adicionadas"
+            )
 
         print(f"\n=== FOLD {year} ===")
         print(

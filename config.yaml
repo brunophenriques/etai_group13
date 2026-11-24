@@ -33,7 +33,7 @@ columns:
 # ============================================================
 
 validation:
-  strategy: sliding_window
+  strategy: expanding_window
   target_horizon_days: 90
   cv_years: [2020, 2021, 2022, 2023]
 
@@ -56,6 +56,17 @@ random_state: 42
 
 preprocessing:
 
+  feature_engineering:
+    enabled: true
+    features:
+      - recency_ratio
+      - purchases_per_year
+      - value_vs_usual
+      - recent_count_share
+      - discount_pct
+      - value_per_line
+      - value_cv
+    
   drop_rows_without_purchase_date: true
 
   # ----------------------------------------------------------
