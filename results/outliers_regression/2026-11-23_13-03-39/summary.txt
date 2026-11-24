@@ -1,0 +1,43 @@
+OUTLIER TREATMENT (regression)
+=================================================================
+
+Settings:
+{'isolation_forest': {'n_estimators': 300, 'contamination': 0.02},
+ 'treatments': ['none', 'drop_train', 'score'],
+ 'models': {'classification': ['logistic_regression',
+                               'random_forest',
+                               'hist_gradient_boosting'],
+            'regression': ['ridge', 'random_forest', 'hist_gradient_boosting']}}
+
+Validation: sliding_window, folds [2020, 2021, 2022, 2023]
+Primary metric: rmse
+
+MEAN METRICS (over folds and models)
+-----------------------------------------------------------------
+                     mse       rmse        mae      r2  pearson
+treatment                                                      
+none        7.777034e+06  2619.0704  1452.2325 -0.1948   0.6171
+drop_train  1.094799e+07  2926.4392  1516.1036 -0.5681   0.5996
+score       7.758435e+06  2613.5112  1444.6333 -0.1831   0.6130
+
+DIFFERENCE TO 'none' (negative is better for: ['mae', 'mse', 'rmse'])
+-----------------------------------------------------------------
+               delta_mse  delta_rmse  delta_mae  delta_r2  delta_pearson  rmse_delta_std
+treatment                                                                               
+none        0.000000e+00      0.0000     0.0000    0.0000         0.0000          0.0000
+drop_train  3.170955e+06    307.3688    63.8711   -0.3733        -0.0175        862.3729
+score      -1.859911e+04     -5.5592    -7.5992    0.0117        -0.0040         45.0588
+
+RMSE BY MODEL (lower is better)
+-----------------------------------------------------------------
+treatment                            none  drop_train      score
+model                                                           
+hist_gradient_boosting (euros)  2458.0888   2512.6955  2407.5676
+hist_gradient_boosting (log)    2305.4283   2304.4100  2321.0664
+random_forest (euros)           2257.0851   2257.0199  2245.4008
+random_forest (log)             2303.2799   2327.6462  2296.9904
+ridge (euros)                   2257.3071   2286.1479  2259.3306
+ridge (log)                     4133.2332   5870.7157  4150.7113
+
+READING GUIDE
+A version only matters if its difference to 'none' is larger than the spread across folds (rmse_delta_std).

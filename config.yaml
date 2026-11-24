@@ -260,14 +260,34 @@ preprocessing:
       - customer_id
       - random_noise
 
+  # ----------------------------------------------------------
+  # Outlier detection (Isolation Forest, fitted on the train fold only)
+  # Experiment: python -m src.outliers [--task classification|regression]
+  # ----------------------------------------------------------
+
+  outliers:
+    isolation_forest:
+      n_estimators: 300
+      contamination: 0.02       # share of training rows flagged as outliers
+
+    # Versions compared ("none" is the reference and must be present):
+    #   none | drop_train (remove flagged rows from training)
+    #   flag (add outlier_flag) | score (add outlier_score)
+    treatments: [none, drop_train, score]
+
+    # Models used in the comparison, per task (must be enabled in modeling)
+    models:
+      classification: [logistic_regression, random_forest, hist_gradient_boosting]
+      regression: [ridge, random_forest, hist_gradient_boosting]
+
 
 # ============================================================
-# 6. CLASSIFICATION MODELS
+# 6. MODELING - CLASSIFICATION AND REGRESSION
 # ============================================================
 
 modeling:
 
-  task: classification
+  task: classification          # classification | regression
 
   models:
 
@@ -399,6 +419,82 @@ modeling:
   output:
     save_csv: true
     save_txt: true
+
+
+  # ----------------------------------------------------------
+  # Regression models
+  # ----------------------------------------------------------
+
+  regression_models:
+
+    # Constant references (same prediction for every customer)
+    dummy_mean:            # minimises RMSE: reference for RMSE and R2
+      enabled: true
+      parameters:
+        strategy: mean
+
+    dummy_median:          # minimises MAE: reference for MAE
+      enabled: true
+      parameters:
+        strategy: median
+
+    # Linear models (features already arrive scaled)
+    ridge:
+      enabled: true
+      parameters:
+        alpha: 1.0
+
+    lasso:
+      enabled: true
+      parameters:
+        alpha: 1.0
+        max_iter: 10000
+
+    # Tree ensembles
+    random_forest:
+      enabled: true
+      parameters:
+        n_estimators: 300
+        min_samples_leaf: 5
+        n_jobs: -1
+
+    hist_gradient_boosting:
+      enabled: true
+      parameters:
+        max_iter: 200
+        learning_rate: 0.05
+        max_leaf_nodes: 15
+
+    adaboost:
+      enabled: true
+      parameters:
+        n_estimators: 200
+        learning_rate: 0.05
+
+    xgboost:
+      enabled: true
+      parameters:
+        n_estimators: 300
+        learning_rate: 0.05
+        max_depth: 4
+        n_jobs: -1
+
+  # ----------------------------------------------------------
+  # Evaluation
+  # ----------------------------------------------------------
+
+  regression_evaluation:
+    primary_metric: rmse        # lower is better
+
+    metrics:
+      - mse
+      - rmse
+      - mae
+      - r2
+      - pearson                 # correlation between predictions and actual spend
+
+    # euros = predict spend | log = predict log1p(spend), converted back to euros
+    target_transforms: [euros, log]
 
 
 # ============================================================
