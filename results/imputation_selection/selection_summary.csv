@@ -1,0 +1,11 @@
+candidate,mean,std,numeric,k,weights,categorical,label,eligible,numeric_rank,categorical_rank,weight_rank,task,metric
+iterative_0_uniform__unknown,0.7170328427659172,0.02612152948052053,iterative,0,uniform,unknown,Iterative (BayesianRidge) + Unknown,True,2,0,0,classification,f1
+knn_10_uniform__unknown,0.7188271236192697,0.026436738261085533,knn,10,uniform,unknown,KNN (k=10) + Unknown,True,1,0,0,classification,f1
+knn_5_uniform__unknown,0.7151115274371632,0.03177683467084422,knn,5,uniform,unknown,KNN (k=5) + Unknown,True,1,0,0,classification,f1
+median_0_uniform__mode,0.7186014615965959,0.024469548656769525,median,0,uniform,mode,Median + mode,True,0,1,0,classification,f1
+median_0_uniform__unknown,0.7154400587879977,0.027871871495234405,median,0,uniform,unknown,Median + Unknown,True,0,0,0,classification,f1
+iterative_0_uniform__unknown,1440.0174007925261,79.9588063498485,iterative,0,uniform,unknown,Iterative (BayesianRidge) + Unknown,True,2,0,0,regression,mae
+knn_10_uniform__unknown,1437.8916484951812,74.45244185645217,knn,10,uniform,unknown,KNN (k=10) + Unknown,True,1,0,0,regression,mae
+knn_5_uniform__unknown,1440.3123876811533,72.80730182962117,knn,5,uniform,unknown,KNN (k=5) + Unknown,True,1,0,0,regression,mae
+median_0_uniform__mode,1438.1704648387015,73.72031905975442,median,0,uniform,mode,Median + mode,True,0,1,0,regression,mae
+median_0_uniform__unknown,1438.5523292748487,75.07171686732464,median,0,uniform,unknown,Median + Unknown,True,0,0,0,regression,mae

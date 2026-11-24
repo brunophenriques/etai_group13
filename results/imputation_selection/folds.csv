@@ -1,0 +1,5 @@
+fold,train_rows,validation_rows,regression_train,regression_validation,unknown_spend_validation
+2020,1823,670,1007,393,5
+2021,1809,782,943,419,10
+2022,1863,628,1030,295,7
+2023,1918,767,1043,430,16

@@ -1,0 +1,5 @@
+,prior_purchase_count,prior_purchase_count,customer_tenure_days,customer_tenure_days,prior_total_spend,prior_total_spend,Total a Pagar,Total a Pagar
+,count,median,count,median,count,median,count,median
+spend_missing,,,,,,,,
+False,2997,16.0,2997,904.0,2997,11279.19,2997,494.89
+True,119,2.0,119,249.0,119,1061.5299999999997,119,348.93

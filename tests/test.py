@@ -2,9 +2,11 @@ import pandas as pd
 
 from src.data_loader import load_config, load_data
 from src.validation import temporal_cv, temporal_split
+from src.preprocessing import prepare_rows
 
 config = load_config()
 train, _, _ = load_data(config)
+train = prepare_rows(train, config)
 
 train_fold, val_fold = temporal_split(
     train,

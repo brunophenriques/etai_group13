@@ -1,0 +1,59 @@
+imputation_by_task:
+  classification:
+    numeric_imputation:
+      strategy: median
+      columns:
+      - prior_mean_gap_days
+      - days_since_previous_purchase
+      - spend_365d
+      - prior_max_purchase_value
+      fit_on: train_fold_only
+      knn:
+        n_neighbors: 5
+        weights: uniform
+        reference_columns:
+        - prior_purchase_count
+        - customer_tenure_days
+        - purchase_count_90d
+        - spend_90d
+      iterative:
+        max_iter: 10
+    categorical_missing:
+      fallback_value: Unknown
+      add_missing_indicator: true
+      recover_from_customer_history:
+      - payment_type
+      - warehouse
+      - salesperson
+      keep_unknown:
+      - transport_method
+      strategy: unknown
+  regression:
+    numeric_imputation:
+      strategy: median
+      columns:
+      - prior_mean_gap_days
+      - days_since_previous_purchase
+      - spend_365d
+      - prior_max_purchase_value
+      fit_on: train_fold_only
+      knn:
+        n_neighbors: 5
+        weights: uniform
+        reference_columns:
+        - prior_purchase_count
+        - customer_tenure_days
+        - purchase_count_90d
+        - spend_90d
+      iterative:
+        max_iter: 10
+    categorical_missing:
+      fallback_value: Unknown
+      add_missing_indicator: true
+      recover_from_customer_history:
+      - payment_type
+      - warehouse
+      - salesperson
+      keep_unknown:
+      - transport_method
+      strategy: unknown

@@ -256,6 +256,7 @@ def run_evaluation():
         transformer, columns = fit_feature_transformer(
             prepared_train,
             config,
+            task="classification",
         )
 
         X_train = apply_feature_transformer(

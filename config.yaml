@@ -59,16 +59,6 @@ preprocessing:
   drop_rows_without_purchase_date: true
 
   # ----------------------------------------------------------
-  # Feature selection
-  # ----------------------------------------------------------
-
-  feature_selection:
-    drop_columns:
-      - ID
-      - customer_id
-      - random_noise
-
-  # ----------------------------------------------------------
   # Date features
   # ----------------------------------------------------------
 
@@ -166,8 +156,8 @@ preprocessing:
 
   numeric_imputation:
 
-    # Options: median, mean, knn
-    strategy: knn
+    # Options: median, mean, knn, iterative
+    strategy: median
 
     columns:
       - prior_mean_gap_days
@@ -192,6 +182,7 @@ preprocessing:
   # ----------------------------------------------------------
 
   categorical_missing:
+    strategy: unknown
     fallback_value: Unknown
     add_missing_indicator: true
 
@@ -212,23 +203,28 @@ preprocessing:
     drop_first: false
     handle_unknown: ignore
 
+    frequency_columns_by_task:
+      classification: [payment_type]
+      regression: [transport_method]
+
     categorical_columns:
       - payment_type
       - warehouse
       - salesperson
       - commercial_zone
       - document_series
+      - transport_method
       - purchase_month
       - purchase_day_of_week
 
     rare_categories:
       enabled: true
 
-      columns:
-        - transport_method
-
-      min_frequency: 20
-      handle_unknown: infrequent_if_exist
+      min_frequency_by_column:
+        transport_method: 20
+        payment_type: 20
+        salesperson: 30
+        commercial_zone: 60
 
   # ----------------------------------------------------------
   # Feature scaling
@@ -252,6 +248,17 @@ preprocessing:
 
   customer_metadata:
     enabled: false
+
+  # ----------------------------------------------------------
+  # Feature selection
+  # ----------------------------------------------------------
+
+  feature_selection:
+    include_imputation_indicators: false
+    drop_columns:
+      - ID
+      - customer_id
+      - random_noise
 
 
 # ============================================================

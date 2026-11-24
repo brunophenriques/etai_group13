@@ -1,0 +1,18 @@
+{
+  "classification": {
+    "numeric": "median",
+    "k": 0,
+    "weights": "uniform",
+    "categorical": "unknown",
+    "label": "Median + Unknown",
+    "candidate": "median_0_uniform__unknown"
+  },
+  "regression": {
+    "numeric": "median",
+    "k": 0,
+    "weights": "uniform",
+    "categorical": "unknown",
+    "label": "Median + Unknown",
+    "candidate": "median_0_uniform__unknown"
+  }
+}

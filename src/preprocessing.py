@@ -47,13 +47,13 @@ def create_date_features(
     extract = date_config["extract"]
 
     if "year" in extract:
-        data["purchase_year"] = dates.dt.year
+        data["purchase_year"] = dates.dt.year.fillna(0).astype(int)
 
     if "month" in extract:
-        data["purchase_month"] = dates.dt.month
+        data["purchase_month"] = dates.dt.month.fillna(0).astype(int)
 
     if "day_of_week" in extract:
-        data["purchase_day_of_week"] = dates.dt.dayofweek
+        data["purchase_day_of_week"] = dates.dt.dayofweek.fillna(-1).astype(int)
 
     if date_config["drop_original_from_model"]:
         data = data.drop(columns=[date_col])
