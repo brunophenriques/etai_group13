@@ -273,7 +273,8 @@ preprocessing:
 
     consensus:
       enabled: true
-      rejection_threshold: 4
+      rejection_threshold: 4  
+      evaluation_thresholds : [4,3]
 
     methods:
       mrmr:
