@@ -11,6 +11,15 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_selection import RFECV
 from sklearn.linear_model import LogisticRegression
 
+from sklearn.feature_selection import RFE
+from sklearn.metrics import f1_score
+
+from src.fold_preprocessing import prepare_numeric_fold
+from src.feature_transformer import (
+    fit_feature_transformer,
+    apply_feature_transformer,
+)
+
 
 def temporal_inner_splits(dates, config, settings):
     """Build chronological inner splits with a target-horizon embargo."""
@@ -83,8 +92,25 @@ def select_mrmr(X, y, settings, random_state):
     )
 
 
-def select_rfecv(X, y, dates, config, settings, random_state):
-    """RFECV with chronological inner folds."""
+
+def select_rfecv(
+    X, y, dates, raw_train_fold, config, settings, random_state
+):
+    """Temporal RFECV with fold-fitted preprocessing.
+
+    Internal validation periods never participate in fitting
+    imputation, feature engineering statistics, encoders or scalers.
+    """
+
+    if raw_train_fold is None:
+        raise ValueError(
+            "RFECV requires the original outer training fold."
+        )
+
+    if len(raw_train_fold) != len(X):
+        raise ValueError("Raw and transformed training rows differ.")
+
+    splits = temporal_inner_splits(dates, config, settings)
 
     estimator = RandomForestClassifier(
         n_estimators=settings["n_estimators"],
@@ -93,32 +119,195 @@ def select_rfecv(X, y, dates, config, settings, random_state):
         n_jobs=-1,
     )
 
-    splits = temporal_inner_splits(dates, config, settings)
+    n_features = X.shape[1]
+    minimum = settings["min_features_to_select"]
+    step = settings["step"]
 
-    # Ensure each training split contains both target classes.
-    for train_idx, val_idx in splits:
-        if (
-            y.iloc[train_idx].nunique() != 2
-            or y.iloc[val_idx].nunique() != 2
-        ):
-            raise ValueError("RFECV inner split contains only one class.")
+    if not 1 <= minimum <= n_features:
+        raise ValueError("Invalid min_features_to_select.")
 
-    selector = RFECV(
-        estimator=estimator,
-        step=settings["step"],
-        min_features_to_select=settings["min_features_to_select"],
-        cv=splits,
-        scoring=settings["scoring"],
-        n_jobs=1,
+    if step <= 0:
+        raise ValueError("RFECV step must be positive.")
+
+    if isinstance(step, float) and step > 1:
+        raise ValueError("Float RFECV step must be <= 1.")
+
+    # Candidate feature counts. The elimination step uses
+    # the initial feature count, as in sklearn RFE/RFECV.
+    step_size = (
+        max(1, int(step * n_features))
+        if isinstance(step, float)
+        else int(step)
     )
 
-    selector.fit(X, y)
+    candidates = list(
+        range(n_features, minimum, -step_size)
+    )
+
+    if minimum not in candidates:
+        candidates.append(minimum)
+
+    # Preprocess each inner split independently.
+    prepared_splits = []
+
+    for split_number, (train_idx, val_idx) in enumerate(
+        splits, start=1
+    ):
+        raw_inner_train = raw_train_fold.iloc[train_idx]
+        raw_inner_val = raw_train_fold.iloc[val_idx]
+
+        y_inner_train = y.iloc[train_idx]
+        y_inner_val = y.iloc[val_idx]
+
+        if (
+            y_inner_train.nunique() != 2
+            or y_inner_val.nunique() != 2
+        ):
+            raise ValueError(
+                f"Only one target class in inner split {split_number}."
+            )
+
+        inner_train, inner_val, _ = prepare_numeric_fold(
+            raw_inner_train,
+            raw_inner_val,
+            config,
+            task="classification",
+        )
+
+        transformer, columns = fit_feature_transformer(
+            inner_train,
+            config,
+            task="classification",
+        )
+
+        X_inner_train = apply_feature_transformer(
+            inner_train,
+            transformer,
+            columns,
+            config,
+        )
+
+        X_inner_val = apply_feature_transformer(
+            inner_val,
+            transformer,
+            columns,
+            config,
+        )
+
+        # The outer training fold defines the available output
+        # column names. No inner validation data is used to
+        # fit preprocessing statistics.
+        X_inner_train = X_inner_train.reindex(
+            columns=X.columns,
+            fill_value=0.0,
+        )
+        X_inner_val = X_inner_val.reindex(
+            columns=X.columns,
+            fill_value=0.0,
+        )
+
+        prepared_splits.append(
+            (
+                X_inner_train,
+                X_inner_val,
+                y_inner_train,
+                y_inner_val,
+            )
+        )
+
+        print(
+            f"  Inner split {split_number}: "
+            f"train={len(X_inner_train)}, "
+            f"val={len(X_inner_val)}"
+        )
+
+    # Evaluate each candidate number of features using
+    # strictly inner-training-fitted selectors.
+    records = []
+
+    for k in candidates:
+        scores = []
+
+        for (
+            X_inner_train,
+            X_inner_val,
+            y_inner_train,
+            y_inner_val,
+        ) in prepared_splits:
+
+            selector = RFE(
+                estimator=estimator,
+                n_features_to_select=k,
+                step=step,
+            )
+
+            selector.fit(X_inner_train, y_inner_train)
+
+            predictions = selector.predict(X_inner_val)
+
+            scores.append(
+                f1_score(
+                    y_inner_val,
+                    predictions,
+                    zero_division=0,
+                )
+            )
+
+        records.append({
+            "n_features": k,
+            "mean_f1": float(np.mean(scores)),
+            "std_f1": float(np.std(scores)),
+        })
+
+    scores_df = pd.DataFrame(records)
+
+    best_score = scores_df["mean_f1"].max()
+    tolerance = settings["score_tolerance"]
+    rule = settings["selection_rule"]
+
+    if tolerance < 0:
+        raise ValueError("score_tolerance must be nonnegative.")
+
+    if rule == "conservative":
+        eligible = scores_df[
+            scores_df["mean_f1"] >= best_score - tolerance
+        ]
+
+        # Preserve more features when scores are practically tied.
+        selected_k = int(eligible["n_features"].max())
+
+    elif rule == "best":
+        best_row = scores_df.loc[
+            scores_df["mean_f1"].idxmax()
+        ]
+        selected_k = int(best_row["n_features"])
+
+    else:
+        raise ValueError(
+            f"Unknown RFECV selection rule: {rule}"
+        )
+
+    print(
+        f"  RFECV: best inner F1={best_score:.4f}, "
+        f"selected features={selected_k}/{n_features}"
+    )
+
+    # Once k has been chosen using inner training/validation,
+    # fit the final selector on the full OUTER training fold.
+    final_selector = RFE(
+        estimator=estimator,
+        n_features_to_select=selected_k,
+        step=step,
+    )
+
+    final_selector.fit(X, y)
 
     return pd.Series(
-        selector.support_,
+        final_selector.support_,
         index=X.columns,
         dtype=bool,
     )
+
 
 
 def select_boruta(X, y, settings, random_state):
@@ -175,7 +364,7 @@ def select_logistic_l1(X, y, settings, random_state):
     )
 
 
-def run_feature_selection(X, y, dates, config):
+def run_feature_selection(X, y, dates, config, raw_train_fold=None):
     """Run configured selectors and return one decision per feature."""
 
     settings = config["preprocessing"]["feature_selection"]
@@ -201,6 +390,9 @@ def run_feature_selection(X, y, dates, config):
     y = y.loc[order]
     dates = dates.loc[order]
 
+    if raw_train_fold is not None:
+        raw_train_fold = raw_train_fold.loc[order]
+
     results = pd.DataFrame(index=X.columns)
 
     if methods["mrmr"]["enabled"]:
@@ -210,7 +402,13 @@ def run_feature_selection(X, y, dates, config):
 
     if methods["rfecv"]["enabled"]:
         results["rfecv"] = select_rfecv(
-            X, y, dates, config, methods["rfecv"], random_state
+            X,
+            y,
+            dates,
+            raw_train_fold,
+            config,
+            methods["rfecv"],
+            random_state,
         )
 
     if methods["boruta"]["enabled"]:

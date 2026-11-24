@@ -100,6 +100,7 @@ def main():
             y_train,
             dates,
             config,
+            raw_train_fold=train_fold,
         )
 
         # Every feature must receive exactly one decision

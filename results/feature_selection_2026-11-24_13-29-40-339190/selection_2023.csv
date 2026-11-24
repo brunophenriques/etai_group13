@@ -1,0 +1,104 @@
+fold,feature,mrmr,rfecv,boruta,logistic_l1,selected_votes,rejected_votes,tentative_votes,remove_candidate
+2023,categorical__warehouse_Final Excel Warehouse 1,True,False,False,True,2,2,0,False
+2023,categorical__warehouse_Final Excel Warehouse 3,False,False,False,False,0,4,0,True
+2023,categorical__warehouse_Unknown,False,False,False,True,1,3,0,False
+2023,categorical__document_series_Ctrl Z Series 1,False,True,False,False,1,3,0,False
+2023,categorical__document_series_Ctrl Z Series 2,False,True,False,True,2,2,0,False
+2023,categorical__document_series_Ctrl Z Series 3,False,True,False,False,1,3,0,False
+2023,categorical__purchase_month_1,True,False,False,True,2,2,0,False
+2023,categorical__purchase_month_10,True,False,False,True,2,2,0,False
+2023,categorical__purchase_month_11,False,False,False,True,1,3,0,False
+2023,categorical__purchase_month_12,False,False,False,True,1,3,0,False
+2023,categorical__purchase_month_2,False,False,False,False,0,4,0,True
+2023,categorical__purchase_month_3,True,True,False,True,3,1,0,False
+2023,categorical__purchase_month_4,False,False,False,True,1,3,0,False
+2023,categorical__purchase_month_5,False,False,False,False,0,4,0,True
+2023,categorical__purchase_month_6,False,False,False,False,0,4,0,True
+2023,categorical__purchase_month_7,False,False,False,False,0,4,0,True
+2023,categorical__purchase_month_8,False,False,False,False,0,4,0,True
+2023,categorical__purchase_month_9,True,False,False,True,2,2,0,False
+2023,categorical__purchase_day_of_week_0,False,False,False,True,1,3,0,False
+2023,categorical__purchase_day_of_week_1,False,False,False,True,1,3,0,False
+2023,categorical__purchase_day_of_week_2,False,False,False,False,0,4,0,True
+2023,categorical__purchase_day_of_week_3,False,False,False,False,0,4,0,True
+2023,categorical__purchase_day_of_week_4,False,False,False,False,0,4,0,True
+2023,categorical__purchase_day_of_week_5,True,True,False,True,3,1,0,False
+2023,categorical__purchase_day_of_week_6,False,False,False,False,0,4,0,True
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 10,False,False,False,False,0,4,0,True
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 11,True,False,True,False,2,2,0,False
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 18,False,False,False,False,0,4,0,True
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 22,True,False,False,False,1,3,0,False
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 32,False,False,False,False,0,4,0,True
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 35,False,False,False,False,0,4,0,True
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 36,False,False,False,False,0,4,0,True
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 39,True,False,False,False,1,3,0,False
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 40,False,False,False,False,0,4,0,True
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 41,False,False,False,False,0,4,0,True
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 42,False,False,False,False,0,4,0,True
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 44,False,False,False,False,0,4,0,True
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 45,False,False,False,False,0,4,0,True
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 46,False,False,False,False,0,4,0,True
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 47,False,False,False,False,0,4,0,True
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 49,False,False,False,False,0,4,0,True
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 51,False,False,False,True,1,3,0,False
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 53,False,False,False,False,0,4,0,True
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 56,False,False,False,False,0,4,0,True
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 59,False,False,False,False,0,4,0,True
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 61,False,False,False,False,0,4,0,True
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 66,False,False,False,False,0,4,0,True
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 68,True,False,False,True,2,2,0,False
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 71,False,False,False,True,1,3,0,False
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 72,False,False,False,True,1,3,0,False
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 73,False,False,False,False,0,4,0,True
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 74,False,False,False,False,0,4,0,True
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 78,False,False,False,False,0,4,0,True
+2023,rare_categorical__transport_method_Maybe Tomorrow Delivery 80,False,False,False,False,0,4,0,True
+2023,rare_categorical__transport_method_Other,False,False,False,False,0,4,0,True
+2023,rare_categorical__transport_method_Unknown,False,False,False,False,0,4,0,True
+2023,rare_categorical__salesperson_Other,False,False,False,False,0,4,0,True
+2023,rare_categorical__salesperson_Unknown,False,False,False,False,0,4,0,True
+2023,rare_categorical__salesperson_VLOOKUP Master 1,True,True,False,False,2,2,0,False
+2023,rare_categorical__salesperson_VLOOKUP Master 2,False,True,False,False,1,3,0,False
+2023,rare_categorical__salesperson_VLOOKUP Master 3,False,False,False,False,0,4,0,True
+2023,rare_categorical__salesperson_VLOOKUP Master 4,True,True,True,True,4,0,0,False
+2023,rare_categorical__salesperson_VLOOKUP Master 7,False,False,False,False,0,4,0,True
+2023,rare_categorical__commercial_zone_Decorative Dashboard Zone 2,False,False,False,False,0,4,0,True
+2023,rare_categorical__commercial_zone_Decorative Dashboard Zone 4,False,False,False,True,1,3,0,False
+2023,rare_categorical__commercial_zone_Other,False,False,False,False,0,4,0,True
+2023,numeric__Total a Pagar,False,True,True,False,2,2,0,False
+2023,numeric__Total Bruto,False,True,True,False,2,2,0,False
+2023,numeric__Total Liquido,False,True,True,True,3,1,0,False
+2023,numeric__Total Imp_,False,True,True,True,3,1,0,False
+2023,numeric__Total Portes,False,True,False,True,2,2,0,False
+2023,numeric__Total Desc_ Global,False,False,False,False,0,4,0,True
+2023,numeric__Total Desc_ Linha,False,True,True,True,3,1,0,False
+2023,numeric__Custo,False,True,True,True,3,1,0,False
+2023,numeric__N_ Detalhes,False,True,False,True,2,2,0,False
+2023,numeric__invoice_count_current_purchase,False,False,False,False,0,4,0,True
+2023,numeric__days_since_previous_purchase,True,True,True,False,3,1,0,False
+2023,numeric__customer_tenure_days,False,True,True,False,2,2,0,False
+2023,numeric__prior_purchase_count,True,True,True,True,4,0,0,False
+2023,numeric__prior_total_spend,True,True,True,True,4,0,0,False
+2023,numeric__prior_mean_purchase_value,False,True,True,False,2,2,0,False
+2023,numeric__prior_std_purchase_value,True,True,True,False,3,1,0,False
+2023,numeric__prior_min_purchase_value,False,True,True,True,3,1,0,False
+2023,numeric__prior_max_purchase_value,True,True,True,True,4,0,0,False
+2023,numeric__prior_mean_gap_days,True,True,True,True,4,0,0,False
+2023,numeric__prior_std_gap_days,False,True,True,True,3,1,0,False
+2023,numeric__purchase_count_30d,True,True,True,True,4,0,0,False
+2023,numeric__spend_30d,True,True,True,True,4,0,0,False
+2023,numeric__purchase_count_90d,True,True,True,True,4,0,0,False
+2023,numeric__spend_90d,True,True,True,False,3,1,0,False
+2023,numeric__purchase_count_180d,True,True,True,False,3,1,0,False
+2023,numeric__spend_180d,True,True,True,True,4,0,0,False
+2023,numeric__purchase_count_365d,True,True,True,True,4,0,0,False
+2023,numeric__spend_365d,True,True,True,False,3,1,0,False
+2023,numeric__recency_ratio,False,True,True,True,3,1,0,False
+2023,numeric__purchases_per_year,True,True,True,True,4,0,0,False
+2023,numeric__value_vs_usual,False,True,True,False,2,2,0,False
+2023,numeric__recent_count_share,True,True,True,True,4,0,0,False
+2023,numeric__discount_pct,True,True,True,True,4,0,0,False
+2023,numeric__value_per_line,False,True,True,True,3,1,0,False
+2023,numeric__value_cv,True,True,True,True,4,0,0,False
+2023,numeric__purchase_year,False,True,True,True,3,1,0,False
+2023,frequency__payment_type,False,True,True,False,2,2,0,False

@@ -280,16 +280,18 @@ preprocessing:
         enabled: true
         n_features: 30
 
-      rfecv:
-        enabled: true
-        step: 0.15
-        min_features_to_select: 10
-        inner_splits: 3
-        min_train_rows: 500
-        min_validation_rows: 100
-        n_estimators: 150
-        min_samples_leaf: 5
-        scoring: f1
+    rfecv:
+      enabled: true
+      step: 0.15
+      min_features_to_select: 10
+      inner_splits: 3
+      min_train_rows: 500
+      min_validation_rows: 100
+      n_estimators: 150
+      min_samples_leaf: 5
+      scoring: f1
+      score_tolerance: 0.005
+      selection_rule: conservative
 
       boruta:
         enabled: true
