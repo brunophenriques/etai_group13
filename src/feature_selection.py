@@ -466,3 +466,54 @@ def run_feature_selection(X, y, dates, config, raw_train_fold=None):
     results.index.name = "feature"
 
     return results.reset_index()
+
+
+def apply_consensus_selection(X_train, X_val, selection, config):
+    """Apply configured consensus decisions to train and validation.
+
+    The selection decisions must have been fitted on training data only.
+    No selectors are fitted here.
+    """
+
+    settings = config["preprocessing"]["feature_selection"]
+
+    if not settings.get("enabled", False):
+        return X_train, X_val
+
+    threshold = settings["consensus"]["apply_threshold"]
+
+    active_methods = sum(
+        method["enabled"]
+        for method in settings["methods"].values()
+    )
+
+    if not 1 <= threshold <= active_methods:
+        raise ValueError("Invalid consensus threshold in config.yaml.")
+
+    if not X_train.columns.is_unique or not X_val.columns.is_unique:
+        raise ValueError("Feature names must be unique.")
+
+    if list(X_train.columns) != list(X_val.columns):
+        raise ValueError("Train and validation feature columns differ.")
+
+    if selection["feature"].duplicated().any():
+        raise ValueError("Duplicate feature selection decisions.")
+
+    votes = selection.set_index("feature")["rejected_votes"]
+
+    if set(votes.index) != set(X_train.columns):
+        raise ValueError("Selection decisions do not match model features.")
+
+    selected_columns = [
+        column
+        for column in X_train.columns
+        if votes.loc[column] < threshold
+    ]
+
+    if not selected_columns:
+        raise ValueError("Consensus removed all features.")
+
+    return (
+        X_train[selected_columns].copy(),
+        X_val[selected_columns].copy(),
+    )
