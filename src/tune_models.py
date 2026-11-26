@@ -31,6 +31,7 @@ from sklearn.metrics import (
     roc_auc_score,
 )
 from src.models import build_models
+from src.outliers import add_anomaly_score
 
 
 PREPROCESSING_FILES = [
@@ -41,6 +42,7 @@ PREPROCESSING_FILES = [
     "src/validation.py",
     "src/tuning_validation.py",
     "src/data_loader.py",
+    "src/outliers.py",
 ]
 
 
@@ -79,6 +81,9 @@ def prepare_matrices(train, val, config):
     x_val = apply_feature_transformer(
         prepared_val, transformer, columns, config
     )
+
+    # Anomaly score: fitted on this training fold only (method: none = off)
+    x_train, x_val, _ = add_anomaly_score(x_train, x_val, config)
 
     target = config["columns"]["classification_target"]
 

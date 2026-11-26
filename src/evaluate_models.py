@@ -23,6 +23,7 @@ from src.feature_transformer import (
 )
 from src.fold_preprocessing import prepare_numeric_fold
 from src.models import build_models, with_target_transform
+from src.outliers import add_anomaly_score, anomaly_settings
 from src.preprocessing import prepare_rows
 from src.validation import temporal_cv
 
@@ -160,6 +161,9 @@ def save_results(results_df, summary, config, task="classification"):
             file.write(
                 f"Primary metric: {evaluation['primary_metric']}\n"
             )
+            file.write(
+                f"Anomaly score: {anomaly_settings(config)['method']}\n"
+            )
 
             if task == "classification":
                 file.write(
@@ -237,11 +241,13 @@ def save_results(results_df, summary, config, task="classification"):
 
 
 
-def run_evaluation(task=None):
+def run_evaluation(task=None, config=None):
     """Entry point: evaluate the configured models using temporal CV
 
     The task comes from modeling.task in config.yaml, unless overridden by
-    the `task` argument (or --task on the command line)
+    the `task` argument (or --task on the command line). A loaded `config`
+    can be passed in instead of reading config.yaml (src/outliers.py uses it
+    to compare anomaly methods)
 
     - "regression": hands over to run_regression_evaluation
     - "classification": runs the classification evaluation below, which
@@ -250,7 +256,8 @@ def run_evaluation(task=None):
       probability-based metrics (F1, PR-AUC, ROC-AUC, ...)
     """
 
-    config = load_config()
+    if config is None:
+        config = load_config()
 
     if task is not None:
         config["modeling"]["task"] = task
@@ -351,6 +358,60 @@ def run_evaluation(task=None):
             config,
         )
 
+<<<<<<< Updated upstream
+=======
+        settings = config["preprocessing"]["feature_engineering"]
+
+        if settings["enabled"]:
+            engineered = settings["features"]
+
+            found = [
+                feature
+                for feature in engineered
+                if any(col.endswith(f"__{feature}") for col in X_train.columns)
+            ]
+
+            print(f"Feature Engineering: {len(found)}/{len(engineered)} features")
+            print("Features encontradas:", found)
+
+            assert len(found) == len(engineered)
+
+        # Anomaly score: fitted on the training fold only (method: none = off).
+        # It comes before feature selection, which then treats it as one more feature
+        X_train, X_val, scorer = add_anomaly_score(X_train, X_val, config)
+
+        if scorer is not None:
+            print(f"Anomaly score: {scorer.method} (feature 'anomaly_score')")
+
+        fs_settings = config["preprocessing"]["feature_selection"]
+
+        if fs_settings.get("enabled", False):
+            selection = run_feature_selection(
+                X_train,
+                y_train,
+                train_fold[
+                    config["preprocessing"]["date_features"]["source_column"]
+                ],
+                config,
+                raw_train_fold=train_fold,
+            )
+
+            original_features = X_train.shape[1]
+
+            X_train, X_val = apply_consensus_selection(
+                X_train,
+                X_val,
+                selection,
+                config,
+            )
+
+            print(
+                f"Feature Selection: "
+                f"{original_features} -> {X_train.shape[1]} features "
+                f"({original_features - X_train.shape[1]} removed)"
+            )
+
+>>>>>>> Stashed changes
         print(f"\n=== FOLD {year} ===")
         print(
             f"Train: {len(X_train)} | "
@@ -523,6 +584,12 @@ def run_regression_evaluation(config):
             columns,
             config,
         )
+
+        # Anomaly score: fitted on the returners of the training fold only
+        X_train, X_val, scorer = add_anomaly_score(X_train, X_val, config)
+
+        if scorer is not None:
+            print(f"Anomaly score: {scorer.method} (feature 'anomaly_score')")
 
         print(f"\n=== FOLD {year} ===")
         print(
