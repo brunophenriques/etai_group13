@@ -1,7 +1,7 @@
 
 """Inspect nested temporal CV inner folds."""
 
-from src.data_loader import load_config, load_data
+from src.data_loader import load_config, load_development_data
 from src.preprocessing import prepare_rows
 from src.validation import temporal_cv
 from src.tuning_validation import make_inner_folds
@@ -9,13 +9,15 @@ from src.tuning_validation import make_inner_folds
 
 def main():
     config = load_config()
-    train, _, _ = load_data(config)
+    train = load_development_data(config)
     train = prepare_rows(train, config)
 
     outer_folds = temporal_cv(
         train,
         config["validation"]["cv_years"],
         config["validation"]["target_horizon_days"],
+        strategy=config["validation"]["strategy"],
+        train_years=config["validation"]["sliding_window"]["train_years"],
     )
 
     for year, outer_train, outer_val in outer_folds:

@@ -1,0 +1,104 @@
+feature,folds_present,mean_selected_votes,mean_rejected_votes,folds_rejected_by_consensus
+categorical__purchase_day_of_week_2,4,0.5,3.5,2
+categorical__purchase_day_of_week_3,4,0.5,3.5,2
+categorical__purchase_month_2,4,0.5,3.5,2
+categorical__purchase_month_5,4,0.5,3.5,2
+categorical__purchase_month_6,4,0.5,3.5,2
+categorical__warehouse_Final Excel Warehouse 3,4,0.5,3.5,2
+rare_categorical__commercial_zone_Other,4,0.5,3.5,2
+rare_categorical__salesperson_Other,4,0.5,3.5,2
+rare_categorical__salesperson_Unknown,4,0.5,3.5,2
+rare_categorical__salesperson_VLOOKUP Master 3,4,0.5,3.5,2
+rare_categorical__transport_method_Maybe Tomorrow Delivery 10,4,0.5,3.5,2
+rare_categorical__transport_method_Maybe Tomorrow Delivery 36,4,0.5,3.5,2
+rare_categorical__transport_method_Maybe Tomorrow Delivery 41,4,0.5,3.5,2
+rare_categorical__transport_method_Maybe Tomorrow Delivery 42,4,0.5,3.5,2
+rare_categorical__transport_method_Maybe Tomorrow Delivery 49,4,0.5,3.5,2
+rare_categorical__transport_method_Unknown,4,0.5,3.5,2
+rare_categorical__commercial_zone_Decorative Dashboard Zone 2,1,0.0,4.0,1
+rare_categorical__transport_method_Maybe Tomorrow Delivery 44,1,0.0,4.0,1
+rare_categorical__transport_method_Maybe Tomorrow Delivery 45,1,0.0,4.0,1
+rare_categorical__transport_method_Maybe Tomorrow Delivery 56,1,0.0,4.0,1
+rare_categorical__transport_method_Maybe Tomorrow Delivery 66,2,0.5,3.5,1
+rare_categorical__transport_method_Maybe Tomorrow Delivery 74,2,0.5,3.5,1
+rare_categorical__transport_method_Maybe Tomorrow Delivery 32,3,0.6666666666666666,3.3333333333333335,1
+categorical__warehouse_Unknown,4,0.75,3.25,1
+rare_categorical__commercial_zone_Decorative Dashboard Zone 4,4,0.75,3.25,1
+rare_categorical__transport_method_Maybe Tomorrow Delivery 40,4,0.75,3.25,1
+rare_categorical__transport_method_Maybe Tomorrow Delivery 46,4,0.75,3.25,1
+rare_categorical__transport_method_Maybe Tomorrow Delivery 71,4,1.0,3.0,1
+numeric__Total Desc_ Global,4,1.25,2.75,1
+rare_categorical__transport_method_Maybe Tomorrow Delivery 35,4,1.25,2.75,1
+categorical__warehouse_Final Excel Warehouse 1,4,1.5,2.5,1
+rare_categorical__transport_method_Other,4,1.75,2.25,1
+categorical__document_series_Ctrl Z Series 1,4,1.0,3.0,0
+categorical__purchase_day_of_week_6,4,1.0,3.0,0
+categorical__purchase_month_8,4,1.0,3.0,0
+numeric__invoice_count_current_purchase,4,1.0,3.0,0
+rare_categorical__salesperson_VLOOKUP Master 2,4,1.0,3.0,0
+rare_categorical__salesperson_VLOOKUP Master 7,4,1.0,3.0,0
+rare_categorical__transport_method_Maybe Tomorrow Delivery 18,4,1.0,3.0,0
+rare_categorical__transport_method_Maybe Tomorrow Delivery 39,1,1.0,3.0,0
+rare_categorical__transport_method_Maybe Tomorrow Delivery 47,4,1.0,3.0,0
+rare_categorical__transport_method_Maybe Tomorrow Delivery 59,4,1.0,3.0,0
+rare_categorical__transport_method_Maybe Tomorrow Delivery 61,2,1.0,3.0,0
+rare_categorical__transport_method_Maybe Tomorrow Delivery 73,4,1.0,3.0,0
+rare_categorical__transport_method_Maybe Tomorrow Delivery 78,4,1.0,3.0,0
+rare_categorical__transport_method_Maybe Tomorrow Delivery 80,4,1.0,3.0,0
+categorical__document_series_Ctrl Z Series 3,4,1.25,2.75,0
+categorical__purchase_month_7,4,1.25,2.75,0
+rare_categorical__transport_method_Maybe Tomorrow Delivery 53,4,1.25,2.75,0
+rare_categorical__transport_method_Maybe Tomorrow Delivery 22,3,1.3333333333333333,2.6666666666666665,0
+rare_categorical__transport_method_Maybe Tomorrow Delivery 51,3,1.3333333333333333,2.6666666666666665,0
+categorical__document_series_Ctrl Z Series 2,2,1.5,2.5,0
+categorical__purchase_day_of_week_4,4,1.5,2.5,0
+frequency__payment_type,4,1.5,2.5,0
+categorical__purchase_day_of_week_1,4,1.75,2.25,0
+numeric__N_ Detalhes,4,1.75,2.25,0
+numeric__Total Portes,4,1.75,2.25,0
+numeric__value_vs_usual,4,1.75,2.25,0
+categorical__purchase_day_of_week_0,4,2.0,2.0,0
+categorical__purchase_month_10,4,2.0,2.0,0
+categorical__purchase_month_12,4,2.0,2.0,0
+categorical__purchase_month_4,4,2.0,2.0,0
+numeric__Total Bruto,4,2.0,2.0,0
+numeric__Total a Pagar,4,2.0,2.0,0
+numeric__customer_tenure_days,4,2.0,2.0,0
+numeric__prior_mean_purchase_value,4,2.0,2.0,0
+rare_categorical__salesperson_VLOOKUP Master 1,4,2.0,2.0,0
+rare_categorical__transport_method_Maybe Tomorrow Delivery 72,4,2.0,2.0,0
+categorical__purchase_day_of_week_5,4,2.25,1.75,0
+categorical__purchase_month_11,4,2.25,1.75,0
+numeric__Custo,4,2.25,1.75,0
+numeric__Total Liquido,4,2.25,1.75,0
+rare_categorical__transport_method_Maybe Tomorrow Delivery 11,4,2.25,1.75,0
+categorical__purchase_month_1,4,2.5,1.5,0
+numeric__purchase_year,4,2.75,1.25,0
+rare_categorical__transport_method_Maybe Tomorrow Delivery 68,4,2.75,1.25,0
+categorical__purchase_month_3,4,3.0,1.0,0
+categorical__purchase_month_9,4,3.0,1.0,0
+numeric__prior_min_purchase_value,4,3.0,1.0,0
+numeric__prior_std_gap_days,4,3.0,1.0,0
+numeric__prior_std_purchase_value,4,3.0,1.0,0
+numeric__purchase_count_180d,4,3.0,1.0,0
+numeric__recency_ratio,4,3.0,1.0,0
+numeric__value_per_line,4,3.0,1.0,0
+rare_categorical__salesperson_VLOOKUP Master 4,4,3.0,1.0,0
+numeric__Total Imp_,4,3.25,0.75,0
+numeric__spend_90d,4,3.25,0.75,0
+numeric__Total Desc_ Linha,4,3.5,0.5,0
+numeric__days_since_previous_purchase,4,3.5,0.5,0
+numeric__prior_purchase_count,4,3.5,0.5,0
+numeric__prior_max_purchase_value,4,3.75,0.25,0
+numeric__prior_mean_gap_days,4,3.75,0.25,0
+numeric__spend_365d,4,3.75,0.25,0
+numeric__discount_pct,4,4.0,0.0,0
+numeric__prior_total_spend,4,4.0,0.0,0
+numeric__purchase_count_30d,4,4.0,0.0,0
+numeric__purchase_count_365d,4,4.0,0.0,0
+numeric__purchase_count_90d,4,4.0,0.0,0
+numeric__purchases_per_year,4,4.0,0.0,0
+numeric__recent_count_share,4,4.0,0.0,0
+numeric__spend_180d,4,4.0,0.0,0
+numeric__spend_30d,4,4.0,0.0,0
+numeric__value_cv,4,4.0,0.0,0

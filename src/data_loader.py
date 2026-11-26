@@ -16,6 +16,20 @@ def load_config():
         return yaml.safe_load(file)
 
 
+def load_development_data(config):
+    """Load development transactions only; never open the competition test file.
+
+    The training CSV also contains the final holdout. Exclude it before any
+    preprocessing, diagnostics, feature selection or model fitting.
+    """
+    date = config["preprocessing"]["date_features"]["source_column"]
+    holdout_year = config["validation"]["holdout_year"]
+    train = pd.read_csv(PROJECT_ROOT / config["paths"]["train"])
+    years = pd.to_datetime(train[date], errors="coerce").dt.year
+    return train.loc[years.lt(holdout_year) | years.isna()].copy()
+
+
+
 def load_data(config):
     """Return training transactions, test transactions, and customer metadata."""
     paths = config["paths"]

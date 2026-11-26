@@ -13,16 +13,11 @@ from sklearn.base import clone
 from sklearn.metrics import f1_score
 from sklearn.model_selection import ParameterGrid, ParameterSampler
 
-from src.data_loader import load_config, load_data
+from src.data_loader import load_config, load_development_data
 from src.preprocessing import prepare_rows
 from src.validation import temporal_cv
 from src.tuning_validation import make_inner_folds
 from src.tuning_cache import TuningCache
-from src.fold_preprocessing import prepare_numeric_fold
-from src.feature_transformer import (
-    fit_feature_transformer,
-    apply_feature_transformer,
-)
 from sklearn.metrics import (
     f1_score,
     precision_score,
@@ -31,7 +26,7 @@ from sklearn.metrics import (
     roc_auc_score,
 )
 from src.models import build_models
-from src.outliers import add_anomaly_score
+from src.pipeline_preprocessing import FittedTaskFeatures
 
 
 PREPROCESSING_FILES = [
@@ -43,6 +38,11 @@ PREPROCESSING_FILES = [
     "src/tuning_validation.py",
     "src/data_loader.py",
     "src/outliers.py",
+    "src/feature_engineering.py",
+    "src/feature_selection.py",
+    "src/pipeline_preprocessing.py",
+    "src/tune_models.py",
+    "src/tuning_cache.py",
 ]
 
 
@@ -66,28 +66,13 @@ def preprocessing_version():
 def prepare_matrices(train, val, config):
     """Fit the full preprocessing exclusively on training data."""
 
-    prepared_train, prepared_val, _ = prepare_numeric_fold(
-        train, val, config
-    )
-
-    transformer, columns = fit_feature_transformer(
-        prepared_train, config, task="classification"
-    )
-
-    x_train = apply_feature_transformer(
-        prepared_train, transformer, columns, config
-    )
-
-    x_val = apply_feature_transformer(
-        prepared_val, transformer, columns, config
-    )
-
-    # Anomaly score: fitted on this training fold only (method: none = off)
-    x_train, x_val, _ = add_anomaly_score(x_train, x_val, config)
+    fitted = FittedTaskFeatures(config, "classification")
+    x_train = fitted.fit_transform(train)
+    x_val = fitted.transform(val)
 
     target = config["columns"]["classification_target"]
 
-    y_train = train[target].to_numpy()
+    y_train = train.loc[fitted.training_mask_, target].to_numpy()
     y_val = val[target].to_numpy()
 
     return x_train, x_val, y_train, y_val
@@ -424,6 +409,9 @@ def run_tuning(config=None):
         config = load_config()
     settings = config["hyperparameter_tuning"]
 
+    if config["modeling"]["task"] != "classification":
+        raise ValueError("This tuning engine supports classification only.")
+
     if not settings["enabled"]:
         raise ValueError("Hyperparameter tuning is disabled.")
 
@@ -441,7 +429,7 @@ def run_tuning(config=None):
 
     base_model = models[model_name]
 
-    df, _, _ = load_data(config)
+    df = load_development_data(config)
     df = prepare_rows(df, config)
 
     cache = TuningCache()
@@ -776,4 +764,4 @@ def run_all_tuning():
 
 
 if __name__ == "__main__":
-    run_all_tuning()
+    run_tuning()

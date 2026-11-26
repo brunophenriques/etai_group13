@@ -7,13 +7,13 @@ import joblib
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from src.data_loader import load_config, load_data
+from src.data_loader import load_config, load_development_data
 from src.feature_transformer import fit_feature_transformer, apply_feature_transformer
 from src.imputation import ImputationPreprocessor
 from src.imputation import TaskPipeline, candidate_config, candidates, select
 
 cfg = load_config()
-raw, _, _ = load_data(cfg)
+raw = load_development_data(cfg)
 dated = raw.loc[pd.to_datetime(raw.purchase_date).dt.year.lt(2020)].copy()
 train = dated.iloc[:150].copy()
 query = dated.iloc[150:154].copy()
@@ -106,8 +106,11 @@ recovered = ImputationPreprocessor(config).fit(history).transform(observation)
 assert recovered.days_since_previous_purchase.iloc[0] == 31
 
 # Missing spending labels do not become training labels; pipelines serialize.
+# Use the pre-2020 development history: the former 500-row fixture cannot
+# support configured RFECV now that TaskPipeline correctly runs selection.
+pipeline_train = dated.copy()
 for task, model in [("classification", "logistic_regression"), ("regression", "ridge")]:
-    pipeline = TaskPipeline(config, task, model).fit(dated.iloc[:500])
+    pipeline = TaskPipeline(config, task, model).fit(pipeline_train)
     predicted = pipeline.predict(query)
     without_targets = query.drop(columns=["repeat_purchase_90d", "spend_next_90d"])
     np.testing.assert_allclose(predicted, pipeline.predict(without_targets))
@@ -120,7 +123,7 @@ for task, model in [("classification", "logistic_regression"), ("regression", "r
         joblib.dump(pipeline, path)
         np.testing.assert_allclose(predicted, joblib.load(path).predict(query))
     if task == "regression":
-        changed = dated.iloc[:500].copy()
+        changed = pipeline_train.copy()
         changed.loc[changed.repeat_purchase_90d.eq(0), "spend_next_90d"] = 1e9
         np.testing.assert_allclose(predicted, TaskPipeline(config, task, model).fit(changed).predict(query))
 

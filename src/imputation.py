@@ -20,7 +20,6 @@ from threadpoolctl import threadpool_limits
 
 from src.data_loader import PROJECT_ROOT, load_config
 from src.feature_transformer import apply_feature_transformer, categorical_columns, fit_feature_transformer
-from src.outliers import build_anomaly_scorer
 from src.preprocessing import prepare_rows
 from src.validation import temporal_cv
 
@@ -250,37 +249,37 @@ def encode(preprocessor, train, validation, config):
 
 
 class TaskPipeline:
-    """Reusable fitted imputation, encoding and estimator for a single task."""
+    """Serializable configured features and estimator for a single task."""
     def __init__(self, config, task, model_name):
         self.config, self.task, self.model_name = deepcopy(config), task, model_name
 
     def fit(self, train):
-        # All training predictors may inform unsupervised preprocessing; only
-        # known returner spending labels train the conditional regressor.
-        self.preprocessor = ImputationPreprocessor(self.config, self.task).fit(train)
-        cfg = self.preprocessor.config
-        prepared = self.preprocessor.transform(train)
-        self.transformer, self.columns = fit_feature_transformer(prepared, cfg, task=self.task)
-        X = apply_feature_transformer(prepared, self.transformer, self.columns, cfg)
-        # Anomaly score (method: none = off): fitted on all training predictors, no labels.
-        self.anomaly = build_anomaly_scorer(cfg)
-        if self.anomaly is not None:
-            X = self.anomaly.fit_transform(X)
-        self.model = estimators(cfg)[self.task][self.model_name]
-        if self.task == "regression":
-            mask = regression_mask(train, cfg)
-            target = cfg["columns"]["regression_target"]
-        else:
-            target = cfg["columns"]["classification_target"]
-            mask = train[target].isin([0, 1])
-        self.model.fit(X.loc[mask], train.loc[mask, target])
+        # Local imports avoid the imputation/feature-selection dependency cycle.
+        from src.pipeline_preprocessing import FittedTaskFeatures
+        from src.models import build_models
+
+        self.config["modeling"]["task"] = self.task
+        self.features = FittedTaskFeatures(self.config, self.task)
+        X = self.features.fit_transform(train)
+        # Keep existing public fitted-state attributes available to callers.
+        self.preprocessor = self.features.numeric.preprocessor
+        self.transformer, self.columns = self.features.transformer, self.features.columns
+        self.anomaly = self.features.anomaly
+        self.selected_features_ = self.features.selected_features_
+        self.model = build_models(self.config)[self.model_name]
+        target = self.config["columns"][f"{self.task}_target"]
+        self.model.fit(X, train.loc[self.features.training_mask_, target])
         return self
 
     def predict(self, frame):
-        X = apply_feature_transformer(self.preprocessor.transform(frame), self.transformer,
-                                      self.columns, self.preprocessor.config)
-        if self.anomaly is not None:
-            X = self.anomaly.transform(X)
+        fitted = getattr(self, "features", None)
+        if (fitted is None or not hasattr(fitted, "selected_features_")
+                or not hasattr(self, "model")):
+            raise RuntimeError(
+                "TaskPipeline has an incompatible or incomplete fitted-state layout. "
+                "Retrain the pipeline with the current code before predicting."
+            )
+        X = fitted.transform(frame)
         if self.task == "classification":
             return self.model.predict_proba(X)[:, list(self.model.classes_).index(1)]
         return np.maximum(0, self.model.predict(X))

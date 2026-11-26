@@ -3,7 +3,7 @@ from copy import deepcopy
 import numpy as np
 import pandas as pd
 
-from src.data_loader import load_config, load_data
+from src.data_loader import load_config, load_development_data
 from src.feature_transformer import (
     IMPUTATION_INDICATOR_SUFFIXES,
     apply_feature_transformer,
@@ -18,7 +18,7 @@ from src.validation import temporal_cv
 config = load_config()
 legacy_config = deepcopy(config)
 del legacy_config["preprocessing"]["feature_selection"]["include_imputation_indicators"]
-train, _, _ = load_data(config)
+train = load_development_data(config)
 train = prepare_rows(train, config)
 
 validation = config["validation"]
@@ -77,7 +77,10 @@ for year, train_fold, val_fold in temporal_cv(
     legacy_features = prepare_feature_frame(prepared_train, legacy_config)
     assert set(legacy_features.columns) - set(feature_columns) == set(prepared_train.columns[indicators])
     assert not X_train.columns.str.endswith(IMPUTATION_INDICATOR_SUFFIXES).any()
-    assert 80 <= X_train.shape[1] <= 90
+    # Width depends on fold categories and the configured engineered features.
+    assert set(transformer.get_feature_names_out()) == set(X_train.columns)
+    for feature in preprocessing["feature_engineering"]["features"]:
+        assert f"numeric__{feature}" in X_train
 
     assert X_train.index.equals(train_fold.index)
     assert X_val.index.equals(val_fold.index)
@@ -110,22 +113,28 @@ for year, train_fold, val_fold in temporal_cv(
         ("regression", "ridge", "transport_method"),
     ):
         pipeline = TaskPipeline(config, task, model).fit(train_fold)
-        train_matrix = apply_feature_transformer(
-            prepared_train, pipeline.transformer, pipeline.columns, pipeline.config,
+        # Reference encoding uses the same defined eligible population as evaluation.
+        mask = (train_fold[config["columns"]["classification_target"]].eq(1)
+                & train_fold[config["columns"]["regression_target"]].notna())
+        reference_train = prepared_train.loc[mask] if task == "regression" else prepared_train
+        reference, columns = fit_feature_transformer(reference_train, config, task=task)
+        expected = apply_feature_transformer(prepared_val, reference, columns, config)
+        actual = apply_feature_transformer(
+            pipeline.features.numeric.transform(val_fold),
+            pipeline.transformer, pipeline.columns, pipeline.config,
         )
-        val_matrix = apply_feature_transformer(
-            prepared_val, pipeline.transformer, pipeline.columns, pipeline.config,
-        )
-        remaining = X_train.columns[~X_train.columns.str.startswith((
-            f"categorical__{column}_", f"rare_categorical__{column}_",
-        ))]
-        assert train_matrix.columns.equals(val_matrix.columns)
-        assert train_matrix.columns.tolist() == [*remaining, f"frequency__{column}"]
-        assert train_matrix[remaining].equals(X_train[remaining])
-        assert val_matrix[remaining].equals(X_val[remaining])
+        pd.testing.assert_frame_equal(actual, expected)
+        selected = pipeline.features.transform(inputs)
+        assert list(selected.columns) == pipeline.selected_features_
+        assert pipeline.model.n_features_in_ == selected.shape[1]
+        assert np.isfinite(selected.to_numpy()).all()
+        if task == "classification":
+            assert pipeline.features.selection_ is not None
+        else:
+            assert pipeline.features.selection_ is None
         predictions = pipeline.predict(inputs)
         assert predictions.shape == (len(val_fold),) and np.isfinite(predictions).all()
-        task_widths[f"{task}_features"] = train_matrix.shape[1]
+        task_widths[f"{task}_features"] = selected.shape[1]
 
     results.append({
         "fold": year,

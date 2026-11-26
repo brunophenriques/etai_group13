@@ -16,17 +16,12 @@ from sklearn.metrics import (
     roc_auc_score,
 )
 
-from src.data_loader import load_config, load_data
-from src.feature_transformer import (
-    apply_feature_transformer,
-    fit_feature_transformer,
-)
-from src.fold_preprocessing import prepare_numeric_fold
+from src.data_loader import load_config, load_development_data
 from src.models import build_models, with_target_transform
-from src.outliers import add_anomaly_score, anomaly_settings
+from src.outliers import anomaly_settings
 from src.preprocessing import prepare_rows
 from src.validation import temporal_cv
-from src.feature_selection import run_feature_selection, apply_consensus_selection
+from src.pipeline_preprocessing import FittedTaskFeatures
 
 # Classification metrics
 METRICS = {
@@ -242,6 +237,27 @@ def save_results(results_df, summary, config, task="classification"):
 
 
 
+def log_feature_pipeline(fitted):
+    """Report fitted stages without fitting or changing model features."""
+    engineering = fitted.config["preprocessing"].get("feature_engineering", {})
+    if engineering.get("enabled", False):
+        features = engineering["features"]
+        names = fitted.transformer.get_feature_names_out()
+        found = [feature for feature in features
+                 if any(name.endswith(f"__{feature}") for name in names)]
+        print(f"Feature Engineering: {len(found)}/{len(features)} features")
+        print("Engineered features:", found)
+    else:
+        print("Feature Engineering: disabled")
+    method = fitted.anomaly.method if fitted.anomaly is not None else "none"
+    print(f"Anomaly score: {method}")
+    before = fitted.n_features_before_selection_
+    after = len(fitted.selected_features_)
+    status = "" if fitted.selection_ is not None else " [not applied]"
+    print(f"Feature Selection: {before} -> {after} features "
+          f"({before - after} removed){status}")
+
+
 def run_evaluation(task=None, config=None):
     """Entry point: evaluate the configured models using temporal CV
 
@@ -294,7 +310,7 @@ def run_evaluation(task=None, config=None):
             "Unsupported temporal validation strategy."
         )
 
-    train, _, _ = load_data(config)
+    train = load_development_data(config)
     train = prepare_rows(train, config)
 
     target = config["columns"]["classification_target"]
@@ -315,7 +331,8 @@ def run_evaluation(task=None, config=None):
             .get("train_years"),
     ):
 
-        y_train = train_fold[target]
+        labelled = train_fold[target].isin([0, 1])
+        y_train = train_fold.loc[labelled, target]
         y_val = val_fold[target]
 
         for name, labels in [
@@ -331,85 +348,11 @@ def run_evaluation(task=None, config=None):
                     f"Invalid {name} labels in fold {year}"
                 )
 
-        prepared_train, prepared_val, _ = (
-            prepare_numeric_fold(
-                train_fold,
-                val_fold,
-                config,
-            )
-        )
+        fitted = FittedTaskFeatures(config, "classification")
+        X_train = fitted.fit_transform(train_fold)
+        X_val = fitted.transform(val_fold)
 
-        transformer, columns = fit_feature_transformer(
-            prepared_train,
-            config,
-            task="classification",
-        )
-
-        X_train = apply_feature_transformer(
-            prepared_train,
-            transformer,
-            columns,
-            config,
-        )
-
-        X_val = apply_feature_transformer(
-            prepared_val,
-            transformer,
-            columns,
-            config,
-        )
-
-        settings = config["preprocessing"]["feature_engineering"]
-
-        if settings["enabled"]:
-            engineered = settings["features"]
-
-            found = [
-                feature
-                for feature in engineered
-                if any(col.endswith(f"__{feature}") for col in X_train.columns)
-            ]
-
-            print(f"Feature Engineering: {len(found)}/{len(engineered)} features")
-            print("Features encontradas:", found)
-
-            assert len(found) == len(engineered)
-
-        # Anomaly score: fitted on the training fold only (method: none = off).
-        # It comes before feature selection, which then treats it as one more feature
-        X_train, X_val, scorer = add_anomaly_score(X_train, X_val, config)
-
-        if scorer is not None:
-            print(f"Anomaly score: {scorer.method} (feature 'anomaly_score')")
-
-        fs_settings = config["preprocessing"]["feature_selection"]
-
-        if fs_settings.get("enabled", False):
-            selection = run_feature_selection(
-                X_train,
-                y_train,
-                train_fold[
-                    config["preprocessing"]["date_features"]["source_column"]
-                ],
-                config,
-                raw_train_fold=train_fold,
-            )
-
-            original_features = X_train.shape[1]
-
-            X_train, X_val = apply_consensus_selection(
-                X_train,
-                X_val,
-                selection,
-                config,
-            )
-
-            print(
-                f"Feature Selection: "
-                f"{original_features} -> {X_train.shape[1]} features "
-                f"({original_features - X_train.shape[1]} removed)"
-            )
-
+        log_feature_pipeline(fitted)
         print(f"\n=== FOLD {year} ===")
         print(
             f"Train: {len(X_train)} | "
@@ -521,7 +464,7 @@ def run_regression_evaluation(config):
 
     models = build_models(config)
 
-    train, _, _ = load_data(config)
+    train = load_development_data(config)
     train = prepare_rows(train, config)
 
     classification_target = config["columns"]["classification_target"]
@@ -539,56 +482,15 @@ def run_regression_evaluation(config):
             .get("train_years"),
     ):
 
-        # Imputation is fitted on the whole training fold (targets are not used)
-        prepared_train, prepared_val, _ = (
-            prepare_numeric_fold(
-                train_fold,
-                val_fold,
-                config,
-            )
-        )
-
-        # Regression uses only customers who returned and have a known spend
-        train_mask = (
-            (train_fold[classification_target] == 1)
-            & train_fold[target].notna()
-        ).to_numpy()
-        val_mask = (
-            (val_fold[classification_target] == 1)
-            & val_fold[target].notna()
-        ).to_numpy()
-
-        prepared_train = prepared_train[train_mask]
-        prepared_val = prepared_val[val_mask]
-        y_train = train_fold.loc[train_mask, target]
+        fitted = FittedTaskFeatures(config, "regression")
+        X_train = fitted.fit_transform(train_fold)
+        val_mask = ((val_fold[classification_target] == 1)
+                    & val_fold[target].notna())
+        X_val = fitted.transform(val_fold.loc[val_mask])
+        y_train = train_fold.loc[fitted.training_mask_, target]
         y_val = val_fold.loc[val_mask, target]
 
-        transformer, columns = fit_feature_transformer(
-            prepared_train,
-            config,
-            task="regression",
-        )
-
-        X_train = apply_feature_transformer(
-            prepared_train,
-            transformer,
-            columns,
-            config,
-        )
-
-        X_val = apply_feature_transformer(
-            prepared_val,
-            transformer,
-            columns,
-            config,
-        )
-
-        # Anomaly score: fitted on the returners of the training fold only
-        X_train, X_val, scorer = add_anomaly_score(X_train, X_val, config)
-
-        if scorer is not None:
-            print(f"Anomaly score: {scorer.method} (feature 'anomaly_score')")
-
+        log_feature_pipeline(fitted)
         print(f"\n=== FOLD {year} ===")
         print(
             f"Train: {len(X_train)} | "
