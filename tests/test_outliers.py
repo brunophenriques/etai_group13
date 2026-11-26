@@ -7,7 +7,7 @@ import pandas as pd
 from sklearn.neighbors import LocalOutlierFactor
 
 import src.feature_selection as fs
-from src.data_loader import load_config, load_data
+from src.data_loader import load_config, load_development_data
 from src.feature_selection import apply_consensus_selection, run_feature_selection
 from src.feature_transformer import apply_feature_transformer, fit_feature_transformer
 from src.fold_preprocessing import prepare_numeric_fold
@@ -158,7 +158,7 @@ for method in ("isolation_forest", "lof"):
     assert list(x_train.columns) == list(x_val.columns) == list(train.columns) + [SCORE_COLUMN]
 
 # Real folds 
-data = prepare_rows(load_data(config)[0], config)
+data = prepare_rows(load_development_data(config), config)
 validation = config["validation"]
 fold = next(temporal_cv(
     data,

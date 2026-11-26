@@ -1,5 +1,6 @@
+"""Coordinate fitted imputation and configured feature engineering."""
 
-"""Coordinate preprocessing and feature engineering within temporal folds."""
+from copy import deepcopy
 
 import numpy as np
 
@@ -7,40 +8,41 @@ from src.imputation import ImputationPreprocessor
 from src.feature_engineering import apply_configured_feature_engineering
 
 
+class NumericFeaturePreprocessor:
+    """Retain training-only imputation and engineered-feature replacement state."""
+
+    def __init__(self, config, task=None):
+        self.config = deepcopy(config)
+        self.task = task
+
+    def _engineer(self, prepared):
+        result = apply_configured_feature_engineering(prepared, self.config)
+        if self.features_:
+            result[self.features_] = result[self.features_].replace(
+                [np.inf, -np.inf], np.nan
+            )
+        return result
+
+    def fit(self, train):
+        self.preprocessor = ImputationPreprocessor(self.config, self.task).fit(train)
+        settings = self.config["preprocessing"].get("feature_engineering", {})
+        self.features_ = list(settings["features"]) if settings.get("enabled", False) else []
+        prepared = self._engineer(self.preprocessor.transform(train))
+        self.medians_ = prepared[self.features_].median().fillna(0.0)
+        return self
+
+    def transform(self, frame):
+        prepared = self._engineer(self.preprocessor.transform(frame))
+        if self.features_:
+            prepared[self.features_] = prepared[self.features_].fillna(self.medians_)
+        return prepared
+
+
 def prepare_numeric_fold(train_fold, val_fold, config, task=None):
-    """Fit preprocessing on training data; reuse fitted state for validation."""
-
-    # Original preprocessing (Pinho)
-    preprocessor = ImputationPreprocessor(config, task).fit(train_fold)
-
-    train = preprocessor.transform(train_fold)
-    val = preprocessor.transform(val_fold)
-
-    # Feature Engineering (Joana), controlled by config.yaml
-    settings = config["preprocessing"].get("feature_engineering", {})
-
-    state = {"__preprocessor__": preprocessor}
-
-    if settings.get("enabled", False):
-        train = apply_configured_feature_engineering(train, config)
-        val = apply_configured_feature_engineering(val, config)
-
-        features = settings["features"]
-
-        # New features may contain NaNs or infinities
-        train[features] = train[features].replace(
-            [np.inf, -np.inf], np.nan
-        )
-        val[features] = val[features].replace(
-            [np.inf, -np.inf], np.nan
-        )
-
-        # Fit missing-value replacement on training fold only
-        medians = train[features].median().fillna(0.0)
-
-        train[features] = train[features].fillna(medians)
-        val[features] = val[features].fillna(medians)
-
-        state["__feature_engineering_medians__"] = medians
-
-    return train, val, state
+    """Fit on training rows only and reuse the complete state for validation."""
+    fitted = NumericFeaturePreprocessor(config, task).fit(train_fold)
+    state = {"__preprocessor__": fitted.preprocessor,
+             "__numeric_features__": fitted}
+    if fitted.features_:
+        state["__feature_engineering_medians__"] = fitted.medians_
+    return fitted.transform(train_fold), fitted.transform(val_fold), state

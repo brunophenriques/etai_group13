@@ -49,7 +49,7 @@ imputation -> feature engineering -> encoding and scaling -> anomaly score -> fe
 | `src/evaluate_models.py` | Classification: detector fitted on the training fold. Regression: fitted on the returners of the training fold |
 | `src/tune_models.py` | Detector fitted on each training fold (`src/outliers.py` is part of the tuning cache key, so cached trials are not reused after a change) |
 | `src/feature_selection.py` | mRMR, Boruta and L1 see the score as one more column. RFECV rebuilds the features of every inner split, so it also fits a new detector on each inner training split (without this, the column would be filled with 0.0 for every inner row) |
-| `src/imputation.py` (`TaskPipeline`) | Detector fitted on all training predictors, without labels, and saved with the pipeline, so `predict` scores new customers |
+| `src/imputation.py` (`TaskPipeline`) | Shared fitted stages are saved with the pipeline; prediction needs predictors only. Classification uses the training fold; regression encoding/scaling and detection use known-spend returners |
 
 ### Experimental Results
 
@@ -130,6 +130,60 @@ To use a detector in the normal pipeline, set `anomaly.method` to `isolation_for
 
 - The comparison uses the development folds only; the holdout year and the test set were not used.
 - Only three models per task were compared, and the classification comparison ran without feature selection. With the score switched on, feature selection may keep or drop it.
-- The regression detector is fitted on the returners in `evaluate_models` but on all training rows in `TaskPipeline`. The scores seen when evaluating and when predicting therefore come from slightly different detectors; the same convention should be used in both.
+- Regression evaluation and `TaskPipeline` now share the same population policy: imputation and engineered-feature replacement medians use the whole training fold; encoding/scaling and anomaly scoring use training returners with known spending labels. Regression does not run the classification-specific consensus selectors.
 - Scripts that apply the feature transformer outside `evaluate_models`, tuning and `TaskPipeline` (for example the feature-selection and diagnostic scripts) do not add the score. They are only consistent with the model matrix while `anomaly.method` is `none`.
 - `drop_train` and `flag` (earlier versions of this experiment) were tested without gain and are not part of the step.
+
+
+### Pipeline integration and handoff
+
+`FittedTaskFeatures` in `src/pipeline_preprocessing.py` supplies the same fitted
+stages to normal evaluation, classification tuning, and `TaskPipeline`:
+imputation, configured Feature Engineering, encoding/scaling, optional anomaly
+scoring, and classification consensus selection when enabled. Prediction reuses
+training medians, encoders, scalers, detector, and selected feature names without
+requiring either target column. LOF retains its distinct training-score behavior.
+`TaskPipeline` builds the estimator from the existing model configuration rather
+than the fixed models used by the historical imputation comparison.
+
+Each tuning training portion fits its own selectors, including RFECV's independent
+inner preprocessing and anomaly detectors. Validation labels never fit selection.
+Cache keys include anomaly settings, feature-selection/preprocessing settings,
+validation settings, random seed, fold data, and relevant source fingerprints.
+`python -m src.tune_models` uses the configured single tuning run; the historical
+`run_all_tuning()` experiment helper remains an explicit separate function.
+
+The configured search space is currently empty. No search spaces, thresholds,
+model parameters, or tuning trials were changed in the integration or cleanup.
+RFECV must still be able to form two embargoed splits inside each tuning training
+portion; insufficient history raises an error rather than relaxing thresholds.
+
+The previous Expanding/Sliding discrepancy was traced to PR #7 retaining its
+branch's Sliding Window configuration (`main` merge `116f81b`), while the temporal
+validation report retained Expanding Window. At cleanup start, the working tree
+already contained an independent change to `validation.strategy: expanding_window`.
+The cleanup leaves that configuration and the 90-day embargo untouched.
+
+Classification model fitting and selection use only rows with valid binary labels.
+Unknown labels never enter supervised steps; unsupervised imputation and engineered
+medians may still learn from the supplied training predictors. Evaluation retains
+its requirement for valid validation labels. Predictions require neither target.
+Evaluation logs engineered features, the anomaly method (including `none`), and
+feature counts before and after selection.
+
+Configured parameters remain authoritative. In particular, the historical imputation
+comparison factory specifies 200 regression Random Forest trees, while production
+configuration specifies 300. `TaskPipeline` uses the production configuration; the
+comparison factory and configured values were not changed to reconcile that old
+discrepancy. No new model-selection decision is implied.
+
+Previously serialized `TaskPipeline` objects without the shared fitted feature
+state are rejected with an explicit retraining instruction. Newly fitted objects
+retain serialization support; old layouts are not migrated automatically.
+
+The full temporal preprocessing test compares task-specific encoders fitted on the
+correct eligible population and checks the persisted selected model matrix. Its old
+fixed width bound and assumption that every task uses an all-row, unselected matrix
+were outdated after Feature Engineering and consensus integration. See
+`tests/README.md` for development test commands and the unchanged legacy count
+assertions that require their original full-data population.

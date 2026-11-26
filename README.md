@@ -17,8 +17,10 @@ See [integration and reproduction](docs/imputation.md), the executed
 - `notebooks/`: exploratory data analysis.
 - `Project_data/`: raw CSV datasets referenced by the configuration.
 
-Run all existing checks with `python -m tests` from the repository root after
-activating the environment. See [verification instructions](tests/README.md).
+Run development verification with the explicit pytest and module commands in
+[tests/README.md](tests/README.md). The pytest command executes the new integration
+and cache tests. The legacy `python -m tests` command includes holdout checks and
+does not execute pytest functions; do not use it for development verification.
 
 ## Virtual Environment Setup
 
