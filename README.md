@@ -53,3 +53,21 @@ deactivate
 ```
 
 **Note:** The `.venv/` directory should be included in `.gitignore` and should not be committed to Git.
+
+## Feature Engineering & Feature Selection
+
+The pipeline integrates seven engineered features and four feature-selection methods (mRMR, RFECV, Boruta, and Logistic Regression L1) using a configurable consensus-based approach.
+
+Consensus 2/4 was selected as the leading candidate, reducing the average number of encoded features by 66.8% while maintaining comparable predictive performance.
+
+Feature Engineering and Feature Selection are performed within temporal training folds to prevent validation-data leakage.
+
+For implementation details, experimental results, configuration, and methodological limitations, see [Feature Engineering & Feature Selection](docs/feature_engineering_selection.md).
+
+## Temporal Validation
+
+The project uses expanding-window temporal cross-validation (2020–2023) with a 90-day target-availability embargo.
+
+Temporal diagnostics identified changes in customer repurchase behavior and probability calibration during 2022. A three-year sliding-window alternative was evaluated but did not improve overall predictive performance.
+
+See [Temporal Validation Diagnostics](docs/temporal_validation.md) for the analysis and experimental comparison.

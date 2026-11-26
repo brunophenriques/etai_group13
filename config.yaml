@@ -56,6 +56,17 @@ random_state: 42
 
 preprocessing:
 
+  feature_engineering:
+    enabled: true
+    features:
+      - recency_ratio
+      - purchases_per_year
+      - value_vs_usual
+      - recent_count_share
+      - discount_pct
+      - value_per_line
+      - value_cv
+
   drop_rows_without_purchase_date: true
 
   # ----------------------------------------------------------
@@ -254,18 +265,13 @@ preprocessing:
   # ----------------------------------------------------------
 
   feature_selection:
+    enabled: true
     include_imputation_indicators: false
     drop_columns:
       - ID
       - customer_id
       - random_noise
 
-<<<<<<< Updated upstream
-  # ----------------------------------------------------------
-  # Outlier detection (Isolation Forest, fitted on the train fold only)
-  # Experiment: python -m src.outliers [--task classification|regression]
-  # ----------------------------------------------------------
-=======
     consensus:
       enabled: true
       rejection_threshold: 2
@@ -323,7 +329,6 @@ preprocessing:
     model: random_forest
     thresholds: [0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7]
     probability_bins: 10    
->>>>>>> Stashed changes
 
 
 # ============================================================
@@ -331,7 +336,7 @@ preprocessing:
 # ============================================================
 
 anomaly:
-  method: lof                  # none | isolation_forest | lof
+  method: none                 # none | isolation_forest | lof
 
   n_estimators: 100             # isolation_forest: number of trees
   n_neighbors: 20               # lof: larger than the largest group of identical rows

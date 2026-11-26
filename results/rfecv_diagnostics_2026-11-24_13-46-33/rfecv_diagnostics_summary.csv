@@ -1,0 +1,5 @@
+fold,initial_features,selected_features,best_inner_f1,near_best_min_features,near_best_max_features,inner_splits
+2020,91,91,0.7631369514660965,26,91,3
+2021,94,80,0.7423747791722567,80,94,3
+2022,98,14,0.7441555340381593,14,84,3
+2023,103,43,0.7482846355008471,28,103,3

@@ -26,6 +26,7 @@ from src.models import build_models, with_target_transform
 from src.outliers import add_anomaly_score, anomaly_settings
 from src.preprocessing import prepare_rows
 from src.validation import temporal_cv
+from src.feature_selection import run_feature_selection, apply_consensus_selection
 
 # Classification metrics
 METRICS = {
@@ -358,8 +359,6 @@ def run_evaluation(task=None, config=None):
             config,
         )
 
-<<<<<<< Updated upstream
-=======
         settings = config["preprocessing"]["feature_engineering"]
 
         if settings["enabled"]:
@@ -411,7 +410,6 @@ def run_evaluation(task=None, config=None):
                 f"({original_features - X_train.shape[1]} removed)"
             )
 
->>>>>>> Stashed changes
         print(f"\n=== FOLD {year} ===")
         print(
             f"Train: {len(X_train)} | "
