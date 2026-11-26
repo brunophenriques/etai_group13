@@ -15,6 +15,7 @@ from sklearn.feature_selection import RFE
 from sklearn.metrics import f1_score
 
 from src.fold_preprocessing import prepare_numeric_fold
+from src.outliers import SCORE_COLUMN, build_anomaly_scorer
 from src.feature_transformer import (
     fit_feature_transformer,
     apply_feature_transformer,
@@ -193,6 +194,20 @@ def select_rfecv(
             columns,
             config,
         )
+
+        # The outer matrix may carry the anomaly score. Rebuild it here with a
+        # detector fitted on the inner training rows only; without this, the
+        # reindex below would fill the column with 0.0 for every inner row.
+        if SCORE_COLUMN in X.columns:
+            scorer = build_anomaly_scorer(config)
+
+            if scorer is None:
+                raise ValueError(
+                    f"X has a '{SCORE_COLUMN}' column but anomaly.method is none."
+                )
+
+            X_inner_train = scorer.fit_transform(X_inner_train)
+            X_inner_val = scorer.transform(X_inner_val)
 
         # The outer training fold defines the available output
         # column names. No inner validation data is used to

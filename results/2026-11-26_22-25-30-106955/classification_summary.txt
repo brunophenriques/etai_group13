@@ -1,112 +1,49 @@
 ETAI GROUP 13
-REGRESSION RESULTS
+CLASSIFICATION RESULTS
 =================================================================
 
 EXPERIMENT INFORMATION
 -----------------------------------------------------------------
-Date: 2026-11-23_13-00-15-280028
-Target: spend_next_90d
-Validation: sliding_window
+Date: 2026-11-26_22-25-30-106955
+Target: repeat_purchase_90d
+Validation: expanding_window
 CV years: [2020, 2021, 2022, 2023]
 Target horizon: 90 days
-Primary metric: rmse
+Primary metric: f1
+Anomaly score: none
+Classification threshold: 0.5
 
 ACTIVE MODELS
 -----------------------------------------------------------------
-dummy_mean
-  Parameters: {'strategy': 'mean'}
-dummy_median
-  Parameters: {'strategy': 'median'}
-ridge
-  Parameters: {'alpha': 1.0}
-lasso
-  Parameters: {'alpha': 1.0, 'max_iter': 10000}
+logistic_regression
+  Parameters: {'solver': 'liblinear', 'max_iter': 5000, 'C': 1.0}
 random_forest
-  Parameters: {'n_estimators': 300, 'min_samples_leaf': 5, 'n_jobs': -1}
+  Parameters: {'n_estimators': 200, 'min_samples_leaf': 5, 'n_jobs': -1}
 hist_gradient_boosting
-  Parameters: {'max_iter': 200, 'learning_rate': 0.05, 'max_leaf_nodes': 15}
-adaboost
-  Parameters: {'n_estimators': 200, 'learning_rate': 0.05}
-xgboost
-  Parameters: {'n_estimators': 300, 'learning_rate': 0.05, 'max_depth': 4, 'n_jobs': -1}
+  Parameters: {'max_iter': 100, 'learning_rate': 0.1, 'max_leaf_nodes': 15}
 
 CROSS-VALIDATION SUMMARY
 -----------------------------------------------------------------
-                 model target_form     mse_mean      mse_std  rmse_mean  rmse_std  mae_mean  mae_std  r2_mean  r2_std  pearson_mean  pearson_std
-                 lasso       euros 5.136354e+06 1.305693e+06  2253.5263  278.0237 1446.1016  52.8107   0.2398  0.2283        0.6698       0.0639
-         random_forest       euros 5.255889e+06 2.224890e+06  2257.0851  463.9761 1394.7859  84.7671   0.2590  0.1888        0.6503       0.0975
-                 ridge       euros 5.151401e+06 1.284214e+06  2257.3071  273.1690 1451.2615  47.1589   0.2362  0.2333        0.6691       0.0631
-         random_forest         log 5.813775e+06 3.836341e+06  2303.2799  823.5509 1304.0999 303.6267   0.2759  0.1928        0.6288       0.1234
-hist_gradient_boosting         log 5.812464e+06 3.747858e+06  2305.4283  814.4234 1318.8728 303.7585   0.2699  0.2086        0.6172       0.0991
-              adaboost       euros 5.560496e+06 1.813810e+06  2335.3569  377.0135 1555.2233  52.4219   0.2061  0.1485        0.6307       0.0973
-               xgboost         log 6.480453e+06 4.222730e+06  2432.6984  865.9729 1375.8960 326.2220   0.1934  0.2164        0.5765       0.1151
-               xgboost       euros 6.150331e+06 1.998953e+06  2454.7707  407.3192 1477.5302  82.6967   0.1139  0.2465        0.6246       0.0976
-hist_gradient_boosting       euros 6.205820e+06 2.290933e+06  2458.0888  467.0758 1494.1575  91.5807   0.1359  0.0883        0.5873       0.1099
-              adaboost         log 6.523587e+06 3.720593e+06  2470.3465  749.2000 1327.2291 276.0183   0.1562  0.1527        0.5980       0.1212
-            dummy_mean       euros 7.549692e+06 3.475833e+06  2690.9977  641.0650 1814.2318 197.7040  -0.0155  0.0123       -0.0000       0.0000
-          dummy_median       euros 8.550488e+06 4.101415e+06  2856.9111  719.7652 1649.4364 275.1076  -0.1387  0.0535       -0.0000       0.0000
-                 lasso         log 8.919735e+06 4.243852e+06  2919.1395  728.7974 1655.2886 291.4023  -0.1898  0.0527        0.1712       0.1472
-                 ridge         log 1.842286e+07 1.128433e+07  4133.2332 1336.2836 1750.2173 199.5827  -2.3460  3.3141        0.5498       0.1494
+                 model  f1_mean  f1_std  precision_mean  precision_std  recall_mean  recall_std  pr_auc_mean  pr_auc_std  roc_auc_mean  roc_auc_std
+         random_forest   0.7381  0.0175          0.7311         0.0526       0.7482      0.0228       0.8353      0.0253        0.7801       0.0366
+hist_gradient_boosting   0.7219  0.0149          0.7420         0.0673       0.7087      0.0441       0.8316      0.0238        0.7707       0.0310
+   logistic_regression   0.7165  0.0158          0.7853         0.0641       0.6626      0.0364       0.8400      0.0284        0.7853       0.0381
 
 DETAILED RESULTS BY FOLD
 -----------------------------------------------------------------
- fold                  model target_form  train_rows  validation_rows  features          mse      rmse       mae      r2  pearson
- 2020             dummy_mean       euros        1007              393       100 4.209202e+06 2051.6340 1555.5329 -0.0297   0.0000
- 2020           dummy_median       euros        1007              393       100 4.368662e+06 2090.1344 1311.7727 -0.0687      NaN
- 2020                  ridge       euros        1007              393       100 4.364329e+06 2089.0978 1465.4252 -0.0676   0.5938
- 2020                  ridge         log        1007              393       100 3.333116e+07 5773.3145 1916.2971 -7.1534   0.3261
- 2020                  lasso       euros        1007              393       100 4.320202e+06 2078.5097 1453.6229 -0.0568   0.5943
- 2020                  lasso         log        1007              393       100 4.568426e+06 2137.3876 1295.3056 -0.1175   0.2039
- 2020          random_forest       euros        1007              393       100 4.088703e+06 2022.0541 1428.7813 -0.0002   0.6021
- 2020          random_forest         log        1007              393       100 2.685077e+06 1638.6205 1084.2820  0.3432   0.5973
- 2020 hist_gradient_boosting       euros        1007              393       100 3.803528e+06 1950.2636 1361.7080  0.0696   0.5707
- 2020 hist_gradient_boosting         log        1007              393       100 2.846140e+06 1687.0507 1116.2547  0.3038   0.6014
- 2020               adaboost       euros        1007              393       100 3.943563e+06 1985.8406 1625.9644  0.0353   0.5523
- 2020               adaboost         log        1007              393       100 3.530343e+06 1878.9207 1083.5125  0.1364   0.4911
- 2020                xgboost       euros        1007              393       100 5.130519e+06 2265.0649 1532.0407 -0.2550   0.6109
- 2020                xgboost         log        1007              393       100 2.765810e+06 1663.0726 1093.8142  0.3234   0.6063
- 2021             dummy_mean       euros         943              419       101 9.486106e+06 3079.9523 1949.0043 -0.0211   0.0000
- 2021           dummy_median       euros         943              419       101 1.112969e+07 3336.1191 1909.3911 -0.1980   0.0000
- 2021                  ridge       euros         943              419       101 5.112308e+06 2261.0414 1434.3276  0.4497   0.7251
- 2021                  ridge         log         943              419       101 6.633549e+06 2575.5678 1465.6964  0.2859   0.6365
- 2021                  lasso       euros         943              419       101 5.103389e+06 2259.0682 1429.8329  0.4507   0.7276
- 2021                  lasso         log         943              419       101 1.151642e+07 3393.5846 1929.1709 -0.2397  -0.0243
- 2021          random_forest       euros         943              419       101 5.164904e+06 2272.6425 1347.2961  0.4440   0.7259
- 2021          random_forest         log         943              419       101 8.137139e+06 2852.5671 1546.9865  0.1241   0.6950
- 2021 hist_gradient_boosting       euros         943              419       101 7.563202e+06 2750.1277 1524.3137  0.1859   0.5017
- 2021 hist_gradient_boosting         log         943              419       101 8.787445e+06 2964.3625 1629.0141  0.0541   0.6079
- 2021               adaboost       euros         943              419       101 5.967313e+06 2442.8085 1562.1308  0.3577   0.6746
- 2021               adaboost         log         943              419       101 9.010283e+06 3001.7133 1623.3951  0.0301   0.7047
- 2021                xgboost       euros         943              419       101 7.034440e+06 2652.2519 1471.3987  0.2428   0.5877
- 2021                xgboost         log         943              419       101 9.657628e+06 3107.6725 1696.5923 -0.0396   0.5599
- 2022             dummy_mean       euros        1030              295       104 5.061906e+06 2249.8681 1765.5311 -0.0019  -0.0000
- 2022           dummy_median       euros        1030              295       104 5.813392e+06 2411.0977 1542.6199 -0.1507  -0.0000
- 2022                  ridge       euros        1030              295       104 4.152865e+06 2037.8579 1397.0558  0.1780   0.7171
- 2022                  ridge         log        1030              295       104 1.404385e+07 3747.5130 1764.9917 -1.7798   0.6169
- 2022                  lasso       euros        1030              295       104 4.131434e+06 2032.5930 1387.2004  0.1822   0.7177
- 2022                  lasso         log        1030              295       104 6.135435e+06 2476.9810 1545.9579 -0.2144   0.1738
- 2022          random_forest       euros        1030              295       104 3.366214e+06 1834.7245 1306.5216  0.3337   0.7368
- 2022          random_forest         log        1030              295       104 2.432168e+06 1559.5408 1001.8875  0.5186   0.7523
- 2022 hist_gradient_boosting       euros        1030              295       104 4.780749e+06 2186.4925 1518.1303  0.0537   0.7465
- 2022 hist_gradient_boosting         log        1030              295       104 2.308871e+06 1519.4970 1006.4750  0.5430   0.7498
- 2022               adaboost       euros        1030              295       104 4.382641e+06 2093.4758 1506.9787  0.1325   0.7473
- 2022               adaboost         log        1030              295       104 3.153536e+06 1775.8199 1100.9160  0.3758   0.7013
- 2022                xgboost       euros        1030              295       104 3.964677e+06 1991.1497 1362.9609  0.2153   0.7633
- 2022                xgboost         log        1030              295       104 2.911421e+06 1706.2887 1095.7242  0.4237   0.7087
- 2023             dummy_mean       euros        1043              430       105 1.144155e+07 3382.5366 1986.8587 -0.0095  -0.0000
- 2023           dummy_median       euros        1043              430       105 1.289021e+07 3590.2933 1833.9618 -0.1373   0.0000
- 2023                  ridge       euros        1043              430       105 6.976102e+06 2641.2312 1508.2375  0.3845   0.6402
- 2023                  ridge         log        1043              430       105 1.968286e+07 4436.5375 1853.8841 -0.7366   0.6197
- 2023                  lasso       euros        1043              430       105 6.990390e+06 2643.9345 1513.7501  0.3832   0.6396
- 2023                  lasso         log        1043              430       105 1.345866e+07 3668.6051 1850.7200 -0.1874   0.3315
- 2023          random_forest       euros        1043              430       105 8.403734e+06 2898.9195 1496.5446  0.2585   0.5364
- 2023          random_forest         log        1043              430       105 1.000072e+07 3162.3912 1583.2438  0.1177   0.4704
- 2023 hist_gradient_boosting       euros        1043              430       105 8.675801e+06 2945.4712 1572.4781  0.2345   0.5303
- 2023 hist_gradient_boosting         log        1043              430       105 9.307399e+06 3050.8030 1523.7474  0.1788   0.5099
- 2023               adaboost       euros        1043              430       105 7.948468e+06 2819.3027 1525.8191  0.2987   0.5488
- 2023               adaboost         log        1043              430       105 1.040019e+07 3224.9321 1501.0928  0.0824   0.4950
- 2023                xgboost       euros        1043              430       105 8.471686e+06 2910.6162 1543.7204  0.2526   0.5365
- 2023                xgboost         log        1043              430       105 1.058695e+07 3253.7600 1617.4532  0.0659   0.4312
+ fold                  model  train_rows  validation_rows  features  train_positive_rate  val_positive_rate     f1  precision  recall  pr_auc  roc_auc
+ 2020    logistic_regression        2578              670        27               0.5597             0.5940 0.6988     0.7479  0.6558  0.8220   0.7315
+ 2020          random_forest        2578              670        27               0.5597             0.5940 0.7318     0.7202  0.7437  0.8203   0.7266
+ 2020 hist_gradient_boosting        2578              670        27               0.5597             0.5940 0.7121     0.7289  0.6960  0.8235   0.7250
+ 2021    logistic_regression        3234              782        31               0.5529             0.5486 0.7179     0.8526  0.6200  0.8626   0.8179
+ 2021          random_forest        3234              782        31               0.5529             0.5486 0.7533     0.7707  0.7366  0.8567   0.8097
+ 2021 hist_gradient_boosting        3234              782        31               0.5529             0.5486 0.7389     0.7833  0.6993  0.8551   0.7936
+ 2022    logistic_regression        4004              628        34               0.5624             0.4809 0.7121     0.7157  0.7086  0.8095   0.7868
+ 2022          random_forest        4004              628        34               0.5624             0.4809 0.7162     0.6611  0.7815  0.8076   0.7925
+ 2022 hist_gradient_boosting        4004              628        34               0.5624             0.4809 0.7071     0.6527  0.7715  0.8019   0.7827
+ 2023    logistic_regression        4705              767        36               0.5535             0.5815 0.7370     0.8250  0.6659  0.8657   0.8052
+ 2023          random_forest        4705              767        36               0.5535             0.5815 0.7512     0.7725  0.7309  0.8568   0.7915
+ 2023 hist_gradient_boosting        4705              767        36               0.5535             0.5815 0.7295     0.8032  0.6682  0.8459   0.7816
 
 EXPERIMENT CONFIGURATION
 -----------------------------------------------------------------
@@ -119,14 +56,21 @@ EXPERIMENT CONFIGURATION
  'columns': {'customer_id': 'customer_id',
              'classification_target': 'repeat_purchase_90d',
              'regression_target': 'spend_next_90d'},
- 'validation': {'strategy': 'sliding_window',
+ 'validation': {'strategy': 'expanding_window',
                 'target_horizon_days': 90,
                 'cv_years': [2020, 2021, 2022, 2023],
                 'holdout_year': 2024,
                 'sliding_window': {'train_years': 3}},
  'random_state': 42,
- 'preprocessing': {'drop_rows_without_purchase_date': True,
-                   'feature_selection': {'drop_columns': ['ID', 'customer_id', 'random_noise']},
+ 'preprocessing': {'feature_engineering': {'enabled': True,
+                                           'features': ['recency_ratio',
+                                                        'purchases_per_year',
+                                                        'value_vs_usual',
+                                                        'recent_count_share',
+                                                        'discount_pct',
+                                                        'value_per_line',
+                                                        'value_cv']},
+                   'drop_rows_without_purchase_date': True,
                    'date_features': {'source_column': 'purchase_date',
                                      'extract': ['year', 'month', 'day_of_week'],
                                      'drop_original_from_model': True},
@@ -164,7 +108,7 @@ EXPERIMENT CONFIGURATION
                                   'sentinel_strategy': 'treat_as_missing',
                                   'negative_values_strategy': 'treat_as_missing',
                                   'add_correction_indicator': True},
-                   'numeric_imputation': {'strategy': 'knn',
+                   'numeric_imputation': {'strategy': 'median',
                                           'columns': ['prior_mean_gap_days',
                                                       'days_since_previous_purchase',
                                                       'spend_365d',
@@ -176,7 +120,8 @@ EXPERIMENT CONFIGURATION
                                                                         'customer_tenure_days',
                                                                         'purchase_count_90d',
                                                                         'spend_90d']}},
-                   'categorical_missing': {'fallback_value': 'Unknown',
+                   'categorical_missing': {'strategy': 'unknown',
+                                           'fallback_value': 'Unknown',
                                            'add_missing_indicator': True,
                                            'recover_from_customer_history': ['payment_type',
                                                                              'warehouse',
@@ -185,43 +130,98 @@ EXPERIMENT CONFIGURATION
                    'encoding': {'strategy': 'one_hot',
                                 'drop_first': False,
                                 'handle_unknown': 'ignore',
+                                'frequency_columns_by_task': {'classification': ['payment_type'],
+                                                              'regression': ['transport_method']},
                                 'categorical_columns': ['payment_type',
                                                         'warehouse',
                                                         'salesperson',
                                                         'commercial_zone',
                                                         'document_series',
+                                                        'transport_method',
                                                         'purchase_month',
                                                         'purchase_day_of_week'],
                                 'rare_categories': {'enabled': True,
-                                                    'columns': ['transport_method'],
-                                                    'min_frequency': 20,
-                                                    'handle_unknown': 'infrequent_if_exist'}},
+                                                    'min_frequency_by_column': {'transport_method': 20,
+                                                                                'payment_type': 20,
+                                                                                'salesperson': 30,
+                                                                                'commercial_zone': 60}}},
                    'scaling': {'enabled': True,
                                'candidates': ['standard', 'robust', 'passthrough'],
                                'default': 'robust',
                                'apply_to': 'numeric_features',
                                'fit_on': 'train_fold_only'},
                    'customer_metadata': {'enabled': False},
-                   'outliers': {'isolation_forest': {'n_estimators': 300, 'contamination': 0.02},
-                                'treatments': ['none', 'drop_train', 'score'],
-                                'models': {'classification': ['logistic_regression',
-                                                              'random_forest',
-                                                              'hist_gradient_boosting'],
-                                           'regression': ['ridge',
+                   'feature_selection': {'enabled': True,
+                                         'include_imputation_indicators': False,
+                                         'drop_columns': ['ID', 'customer_id', 'random_noise'],
+                                         'consensus': {'enabled': True,
+                                                       'rejection_threshold': 2,
+                                                       'apply_threshold': 2,
+                                                       'evaluation_thresholds': [4, 3, 2],
+                                                       'evaluation_models': ['random_forest',
+                                                                             'xgboost',
+                                                                             'catboost',
+                                                                             'logistic_regression',
+                                                                             'lightgbm']},
+                                         'methods': {'mrmr': {'enabled': True, 'n_features': 30},
+                                                     'rfecv': {'enabled': True,
+                                                               'step': 0.15,
+                                                               'min_features_to_select': 10,
+                                                               'inner_splits': 3,
+                                                               'min_train_rows': 500,
+                                                               'min_validation_rows': 100,
+                                                               'n_estimators': 150,
+                                                               'min_samples_leaf': 5,
+                                                               'scoring': 'f1',
+                                                               'score_tolerance': 0.005,
+                                                               'selection_rule': 'conservative'},
+                                                     'boruta': {'enabled': True,
+                                                                'max_iter': 100,
+                                                                'n_estimators': 'auto',
+                                                                'max_depth': 5,
+                                                                'perc': 100},
+                                                     'logistic_l1': {'enabled': True,
+                                                                     'C': 0.1,
+                                                                     'max_iter': 5000,
+                                                                     'tolerance': 1e-06}}},
+                   'feature_importance': {'model': 'random_forest', 'n_repeats': 10, 'top_n': 20},
+                   'monthly_drift': {'predictions_file': None, 'min_monthly_rows': 20},
+                   'threshold_diagnostics': {'model': 'random_forest',
+                                             'thresholds': [0.3,
+                                                            0.35,
+                                                            0.4,
+                                                            0.45,
+                                                            0.5,
+                                                            0.55,
+                                                            0.6,
+                                                            0.65,
+                                                            0.7],
+                                             'probability_bins': 10}},
+ 'anomaly': {'method': 'none',
+             'n_estimators': 100,
+             'n_neighbors': 20,
+             'columns': 'all',
+             'exclude_columns': ['purchase_year'],
+             'experiment': {'methods': ['none', 'isolation_forest', 'lof'],
+                            'models': {'classification': ['logistic_regression',
                                                           'random_forest',
-                                                          'hist_gradient_boosting']}}},
- 'modeling': {'task': 'regression',
-              'models': {'dummy': {'enabled': True, 'parameters': {'strategy': 'prior'}},
+                                                          'hist_gradient_boosting'],
+                                       'regression': ['ridge',
+                                                      'random_forest',
+                                                      'hist_gradient_boosting']}}},
+ 'modeling': {'task': 'classification',
+              'models': {'dummy': {'enabled': False, 'parameters': {'strategy': 'prior'}},
                          'logistic_regression': {'enabled': True,
                                                  'parameters': {'solver': 'liblinear',
                                                                 'max_iter': 5000,
                                                                 'C': 1.0}},
-                         'decision_tree': {'enabled': True, 'parameters': {'min_samples_leaf': 20}},
+                         'decision_tree': {'enabled': False,
+                                           'parameters': {'min_samples_leaf': 20}},
                          'random_forest': {'enabled': True,
                                            'parameters': {'n_estimators': 200,
                                                           'min_samples_leaf': 5,
                                                           'n_jobs': -1}},
-                         'gradient_boosting': {'enabled': True,
+                         'gradient_boosting': {'enabled': False,
                                                'parameters': {'n_estimators': 100,
                                                               'learning_rate': 0.1,
                                                               'max_depth': 3}},
@@ -229,11 +229,11 @@ EXPERIMENT CONFIGURATION
                                                     'parameters': {'max_iter': 100,
                                                                    'learning_rate': 0.1,
                                                                    'max_leaf_nodes': 15}},
-                         'adaboost': {'enabled': True,
+                         'adaboost': {'enabled': False,
                                       'parameters': {'n_estimators': 200,
                                                      'learning_rate': 0.05,
                                                      'random_state': 42}},
-                         'xgboost': {'enabled': True,
+                         'xgboost': {'enabled': False,
                                      'parameters': {'n_estimators': 300,
                                                     'max_depth': 4,
                                                     'learning_rate': 0.05,
@@ -244,7 +244,7 @@ EXPERIMENT CONFIGURATION
                                                     'tree_method': 'hist',
                                                     'random_state': 42,
                                                     'n_jobs': -1}},
-                         'lightgbm': {'enabled': True,
+                         'lightgbm': {'enabled': False,
                                       'parameters': {'n_estimators': 300,
                                                      'learning_rate': 0.05,
                                                      'num_leaves': 15,
@@ -253,7 +253,7 @@ EXPERIMENT CONFIGURATION
                                                      'verbosity': -1,
                                                      'random_state': 42,
                                                      'n_jobs': -1}},
-                         'catboost': {'enabled': True,
+                         'catboost': {'enabled': False,
                                       'parameters': {'iterations': 300,
                                                      'depth': 5,
                                                      'learning_rate': 0.05,
@@ -327,5 +327,3 @@ Preprocessing is fitted separately on each training fold.
 Validation data is transformed without refitting learned imputers, encoders, or scalers.
 The 2024 holdout is excluded from cross-validation.
 Feature availability and leakage verification are not fully completed.
-Only customers who returned and have a known spend are used for training and validation.
-Metrics are computed in euros (original scale), also for models trained on log1p(spend).

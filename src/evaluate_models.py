@@ -23,12 +23,10 @@ from src.feature_transformer import (
 )
 from src.fold_preprocessing import prepare_numeric_fold
 from src.models import build_models, with_target_transform
+from src.outliers import add_anomaly_score, anomaly_settings
 from src.preprocessing import prepare_rows
 from src.validation import temporal_cv
-from src.feature_selection import (
-    run_feature_selection,
-    apply_consensus_selection,
-)
+from src.feature_selection import run_feature_selection, apply_consensus_selection
 
 # Classification metrics
 METRICS = {
@@ -164,6 +162,9 @@ def save_results(results_df, summary, config, task="classification"):
             file.write(
                 f"Primary metric: {evaluation['primary_metric']}\n"
             )
+            file.write(
+                f"Anomaly score: {anomaly_settings(config)['method']}\n"
+            )
 
             if task == "classification":
                 file.write(
@@ -241,11 +242,13 @@ def save_results(results_df, summary, config, task="classification"):
 
 
 
-def run_evaluation(task=None):
+def run_evaluation(task=None, config=None):
     """Entry point: evaluate the configured models using temporal CV
 
     The task comes from modeling.task in config.yaml, unless overridden by
-    the `task` argument (or --task on the command line)
+    the `task` argument (or --task on the command line). A loaded `config`
+    can be passed in instead of reading config.yaml (src/outliers.py uses it
+    to compare anomaly methods)
 
     - "regression": hands over to run_regression_evaluation
     - "classification": runs the classification evaluation below, which
@@ -254,7 +257,8 @@ def run_evaluation(task=None):
       probability-based metrics (F1, PR-AUC, ROC-AUC, ...)
     """
 
-    config = load_config()
+    if config is None:
+        config = load_config()
 
     if task is not None:
         config["modeling"]["task"] = task
@@ -338,7 +342,7 @@ def run_evaluation(task=None):
         transformer, columns = fit_feature_transformer(
             prepared_train,
             config,
-            task=config["modeling"]["task"],
+            task="classification",
         )
 
         X_train = apply_feature_transformer(
@@ -370,6 +374,13 @@ def run_evaluation(task=None):
             print("Features encontradas:", found)
 
             assert len(found) == len(engineered)
+
+        # Anomaly score: fitted on the training fold only (method: none = off).
+        # It comes before feature selection, which then treats it as one more feature
+        X_train, X_val, scorer = add_anomaly_score(X_train, X_val, config)
+
+        if scorer is not None:
+            print(f"Anomaly score: {scorer.method} (feature 'anomaly_score')")
 
         fs_settings = config["preprocessing"]["feature_selection"]
 
@@ -571,6 +582,12 @@ def run_regression_evaluation(config):
             columns,
             config,
         )
+
+        # Anomaly score: fitted on the returners of the training fold only
+        X_train, X_val, scorer = add_anomaly_score(X_train, X_val, config)
+
+        if scorer is not None:
+            print(f"Anomaly score: {scorer.method} (feature 'anomaly_score')")
 
         print(f"\n=== FOLD {year} ===")
         print(

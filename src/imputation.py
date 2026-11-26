@@ -20,6 +20,7 @@ from threadpoolctl import threadpool_limits
 
 from src.data_loader import PROJECT_ROOT, load_config
 from src.feature_transformer import apply_feature_transformer, categorical_columns, fit_feature_transformer
+from src.outliers import build_anomaly_scorer
 from src.preprocessing import prepare_rows
 from src.validation import temporal_cv
 
@@ -261,6 +262,10 @@ class TaskPipeline:
         prepared = self.preprocessor.transform(train)
         self.transformer, self.columns = fit_feature_transformer(prepared, cfg, task=self.task)
         X = apply_feature_transformer(prepared, self.transformer, self.columns, cfg)
+        # Anomaly score (method: none = off): fitted on all training predictors, no labels.
+        self.anomaly = build_anomaly_scorer(cfg)
+        if self.anomaly is not None:
+            X = self.anomaly.fit_transform(X)
         self.model = estimators(cfg)[self.task][self.model_name]
         if self.task == "regression":
             mask = regression_mask(train, cfg)
@@ -274,6 +279,8 @@ class TaskPipeline:
     def predict(self, frame):
         X = apply_feature_transformer(self.preprocessor.transform(frame), self.transformer,
                                       self.columns, self.preprocessor.config)
+        if self.anomaly is not None:
+            X = self.anomaly.transform(X)
         if self.task == "classification":
             return self.model.predict_proba(X)[:, list(self.model.classes_).index(1)]
         return np.maximum(0, self.model.predict(X))

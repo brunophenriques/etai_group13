@@ -33,7 +33,7 @@ columns:
 # ============================================================
 
 validation:
-  strategy: expanding_window
+  strategy: sliding_window
   target_horizon_days: 90
   cv_years: [2020, 2021, 2022, 2023]
 
@@ -66,7 +66,7 @@ preprocessing:
       - discount_pct
       - value_per_line
       - value_cv
-    
+
   drop_rows_without_purchase_date: true
 
   # ----------------------------------------------------------
@@ -266,7 +266,7 @@ preprocessing:
 
   feature_selection:
     enabled: true
-    include_imputation_indicators:    false
+    include_imputation_indicators: false
     drop_columns:
       - ID
       - customer_id
@@ -329,29 +329,31 @@ preprocessing:
     model: random_forest
     thresholds: [0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7]
     probability_bins: 10    
-  # ----------------------------------------------------------
-  # Outlier detection (Isolation Forest, fitted on the train fold only)
-  # Experiment: python -m src.outliers [--task classification|regression]
-  # ----------------------------------------------------------
 
-  outliers:
-    isolation_forest:
-      n_estimators: 300
-      contamination: 0.02       # share of training rows flagged as outliers
 
-    # Versions compared ("none" is the reference and must be present):
-    #   none | drop_train (remove flagged rows from training)
-    #   flag (add outlier_flag) | score (add outlier_score)
-    treatments: [none, drop_train, score]
+# ============================================================
+# 6. ANOMALY SCORE (Isolation Forest or LOF)
+# ============================================================
 
-    # Models used in the comparison, per task (must be enabled in modeling)
+anomaly:
+  method: none                 # none | isolation_forest | lof
+
+  n_estimators: 100             # isolation_forest: number of trees
+  n_neighbors: 20               # lof: larger than the largest group of identical rows
+
+  columns: all                  # all | continuous (more than 2 distinct values)
+  exclude_columns:              # never used by the detector
+    - purchase_year             # calendar column: drifts, so future rows look anomalous
+
+  experiment:                   # only used by python -m src.outliers
+    methods: [none, isolation_forest, lof]    # "none" is the reference
     models:
       classification: [logistic_regression, random_forest, hist_gradient_boosting]
       regression: [ridge, random_forest, hist_gradient_boosting]
 
 
 # ============================================================
-# 6. MODELING - CLASSIFICATION AND REGRESSION
+# 7. MODELING - CLASSIFICATION AND REGRESSION
 # ============================================================
 
 modeling:
@@ -567,7 +569,7 @@ modeling:
 
 
 # ============================================================
-# 7. HYPERPARAMETER OPTIMIZATION
+# 8. HYPERPARAMETER OPTIMIZATION
 # ============================================================
 
 hyperparameter_tuning:
