@@ -361,7 +361,7 @@ def select_logistic_l1(X, y, settings, random_state):
     """L1-regularized logistic regression."""
 
     estimator = LogisticRegression(
-        penalty="l1",
+        l1_ratio=1,
         solver="liblinear",
         C=settings["C"],
         max_iter=settings["max_iter"],

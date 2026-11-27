@@ -4,9 +4,6 @@ import pandas as pd
 import numpy as np
 from sklearn.impute import SimpleImputer, KNNImputer
 from sklearn.preprocessing import RobustScaler
-from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.ensemble import IsolationForest
-from sklearn.neighbors import LocalOutlierFactor
 
 
 def prepare_rows(df: pd.DataFrame, config: dict) -> pd.DataFrame:
@@ -57,7 +54,7 @@ def create_date_features(
         data["purchase_month"] = dates.dt.month.fillna(0).astype(int)
 
     if "day_of_week" in extract:
-        data["purchase_day_of_week"] = dates.dt.dayofweek.fillna(-1).astype(int)
+        data["purchase_day_of_week"] = dates.dt.day_of_week.fillna(-1).astype(int)
 
     if date_config["drop_original_from_model"]:
         data = data.drop(columns=[date_col])
@@ -649,103 +646,3 @@ def clean_historical_gaps(df: pd.DataFrame, config: dict) -> pd.DataFrame:
         data.loc[invalid, column] = float("nan")
 
     return data
-
-class AnomalyScore(TransformerMixin, BaseEstimator):
-
-    def __init__(
-        self,
-        method="isolation_forest",
-        n_neighbors=20,
-        random_state=42
-    ):
-        self.method = method
-        self.n_neighbors = n_neighbors
-        self.random_state = random_state
-
-    def fit(self, X, y=None):
-
-        if self.method == "isolation_forest":
-
-            self.detector_ = IsolationForest(
-                random_state=self.random_state
-            )
-
-        elif self.method == "lof":
-
-            self.detector_ = LocalOutlierFactor(
-                n_neighbors=self.n_neighbors,
-                novelty=True
-            )
-
-        else:
-
-            raise ValueError(
-                f"Unknown anomaly method: {self.method}"
-            )
-
-        self.detector_.fit(X)
-
-        self.n_features_in_ = X.shape[1]
-
-        if isinstance(X, pd.DataFrame):
-            self.feature_names_in_ = X.columns.to_numpy()
-
-        return self
-
-    def fit_transform(self, X, y=None):
-
-        self.fit(X)
-
-        if self.method == "lof":
-
-            scores = -self.detector_.negative_outlier_factor_
-
-            scores = np.log1p(scores)
-
-        else:
-
-            scores = -self.detector_.score_samples(X)
-
-        return self._add_score(X, scores)
-
-    def transform(self, X):
-
-        scores = -self.detector_.score_samples(X)
-
-        if self.method == "lof":
-
-            scores = np.log1p(scores)
-
-        return self._add_score(X, scores)
-
-    def _add_score(self, X, scores):
-
-        if isinstance(X, pd.DataFrame):
-
-            result = X.copy()
-
-        else:
-
-            result = pd.DataFrame(X)
-
-        result["anomaly_score"] = scores
-
-        return result
-
-    def get_feature_names_out(self, input_features=None):
-
-        if input_features is None:
-
-            if hasattr(self, "feature_names_in_"):
-                input_features = self.feature_names_in_
-
-            else:
-                input_features = [
-                    f"x{i}"
-                    for i in range(self.n_features_in_)
-                ]
-
-        return np.append(
-            np.asarray(input_features, dtype=object),
-            "anomaly_score"
-        )

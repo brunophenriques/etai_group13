@@ -1,0 +1,52 @@
+ANOMALY SCORE COMPARISON (classification)
+=================================================================
+
+Settings:
+{'method': 'none',
+ 'n_estimators': 100,
+ 'n_neighbors': 20,
+ 'columns': 'all',
+ 'exclude_columns': ['purchase_year'],
+ 'experiment': {'methods': ['none', 'isolation_forest', 'lof'],
+                'models': {'classification': ['logistic_regression',
+                                              'random_forest',
+                                              'hist_gradient_boosting'],
+                           'regression': ['ridge',
+                                          'random_forest',
+                                          'hist_gradient_boosting']}}}
+Feature selection skipped: False
+Validation: expanding_window, folds [2020, 2021, 2022, 2023]
+
+MEAN METRICS (over folds and models)
+-----------------------------------------------------------------
+                      f1  precision  recall  pr_auc  roc_auc
+method                                                      
+none              0.7255     0.7528  0.7065  0.8356   0.7787
+isolation_forest  0.7200     0.7492  0.7000  0.8348   0.7762
+lof               0.7232     0.7538  0.7019  0.8358   0.7789
+
+DIFFERENCE TO 'none' (negative is better for: ['mae', 'mse', 'rmse'])
+-----------------------------------------------------------------
+                  delta_f1  delta_precision  delta_recall  delta_pr_auc  delta_roc_auc  f1_delta_std
+method                                                                                              
+none                0.0000           0.0000        0.0000        0.0000         0.0000        0.0000
+isolation_forest   -0.0055          -0.0036       -0.0065       -0.0009        -0.0025        0.0094
+lof                -0.0023           0.0010       -0.0046        0.0002         0.0001        0.0056
+
+F1 BY MODEL (higher is better)
+-----------------------------------------------------------------
+method                    none  isolation_forest     lof
+model                                                   
+hist_gradient_boosting  0.7219            0.7165  0.7200
+logistic_regression     0.7165            0.7135  0.7163
+random_forest           0.7381            0.7301  0.7334
+
+THE MOST ANOMALOUS ROWS (top 5% of each validation fold)
+-----------------------------------------------------------------
+                  return rate: top 5% anomalies  return rate: all others
+method                                                                  
+isolation_forest                          0.779                    0.539
+lof                                       0.628                    0.547
+
+READING GUIDE
+A method only matters if its difference to 'none' is larger than the spread across folds (f1_delta_std).
