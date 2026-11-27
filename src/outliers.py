@@ -75,7 +75,7 @@ class AnomalyScore(TransformerMixin, BaseEstimator):
         self.exclude_columns = exclude_columns
         self.random_state = random_state
 
-    # -- column handling -------------------------------------------------------------
+    # column handling
     def _choose_columns(self, X):
         if not isinstance(X, pd.DataFrame):
             if self.columns != "all" or list(self.exclude_columns):
@@ -99,7 +99,7 @@ class AnomalyScore(TransformerMixin, BaseEstimator):
             raise ValueError("The anomaly detector needs finite inputs (impute first).")
         return values
 
-    # -- scikit-learn contract -------------------------------------------------------
+    # scikit-learn contract
     def fit(self, X, y=None):
         if self.method == "isolation_forest":
             self.detector_ = IsolationForest(
@@ -144,7 +144,7 @@ class AnomalyScore(TransformerMixin, BaseEstimator):
         return np.append(np.asarray(input_features, dtype=object), SCORE_COLUMN)
 
 
-# -- config helpers ------------------------------------------------------------------
+# config helpers
 def anomaly_settings(config):
     """The `anomaly` block of config.yaml over the module defaults."""
     settings = deepcopy(DEFAULTS)
@@ -195,7 +195,7 @@ def add_anomaly_score(X_train, X_val, config):
     return scorer.fit_transform(X_train), scorer.transform(X_val), scorer
 
 
-# -- comparison of the methods -------------------------------------------------------
+# comparison of the methods
 def anomaly_profile(config, task):
     """How different are the most anomalous rows? Top 5% of each fold's validation rows
     by anomaly score against the rest: return rate (classification) or mean spend of

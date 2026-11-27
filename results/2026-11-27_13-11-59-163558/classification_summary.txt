@@ -4,7 +4,7 @@ CLASSIFICATION RESULTS
 
 EXPERIMENT INFORMATION
 -----------------------------------------------------------------
-Date: 2026-11-26_22-25-30-106955
+Date: 2026-11-27_13-11-59-163558
 Target: repeat_purchase_90d
 Validation: expanding_window
 CV years: [2020, 2021, 2022, 2023]
